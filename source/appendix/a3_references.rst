@@ -79,6 +79,8 @@
      - 调度器主逻辑
    * - ``kernel/sched/fair.c``
      - CFS 公平调度
+   * - ``kernel/rcu/tree.c``
+     - RCU 宽限期实现
    * - ``kernel/exit.c``
      - 进程退出与僵尸回收
 
@@ -113,8 +115,10 @@
      - VFS 打开与读写
    * - ``fs/namei.c``
      - 路径解析
-   * - ``fs/ext4/``
-     - ext4 具体实现
+   * - ``fs/ext4/``、``fs/xfs/``、``fs/btrfs/``
+     - 具体文件系统实现
+   * - ``mm/shmem.c``
+     - tmpfs 后端
    * - ``mm/filemap.c``
      - page cache
 

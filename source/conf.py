@@ -10,13 +10,14 @@ project = 'Linux 操作系统教程'
 copyright = '2026, os-tutorial'
 author = 'os-tutorial'
 
-release = '0.1.0'
-version = '0.1.0'
+release = '0.2.0'
+version = '0.2.0'
 
 # -- General configuration ---------------------------------------------------
 
 extensions = [
     'sphinx_rtd_theme',      # Read the Docs 主题
+    'sphinxcontrib.mermaid', # Mermaid 图示
     'sphinx.ext.todo',       # 待办事项
     'sphinx.ext.mathjax',    # 数学公式
     'sphinx.ext.ifconfig',   # 条件包含

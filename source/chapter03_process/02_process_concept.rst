@@ -70,6 +70,17 @@
                     ↕
                  阻塞(Blocked)
 
+.. mermaid::
+
+   stateDiagram-v2
+       [*] --> Running: fork / 调度
+       Running --> Sleeping: 等待 I/O 或锁
+       Sleeping --> Running: 资源就绪
+       Running --> Zombie: exit()
+       Zombie --> [*]: 父进程 wait()
+
+:strong:`图` ：进程生命周期状态转换（简化）
+
 Linux 用更细粒度的状态常量（``include/linux/sched.h``）：
 
 .. list-table::

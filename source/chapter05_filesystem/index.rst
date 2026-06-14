@@ -12,6 +12,7 @@
    02_fs_concept
    03_vfs
    04_ext4
-   05_io_uring
+   05_other_fs
+   06_io_uring
    lab_fs_tools
    lab_fs_program

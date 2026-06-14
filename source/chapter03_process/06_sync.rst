@@ -109,6 +109,95 @@ RCU：读-拷贝-更新
 
 RCU 的"宽限期"（grace period）保证读者不会看到已释放的内存。用户态有 ``liburcu`` 等实现，但主要应用于内核（``include/linux/rcupdate.h``）。
 
+RCU 在内核中的实现
+==========================
+
+Linux 内核 RCU 基于:strong:`发布-订阅` 模型，核心 API 在 ``include/linux/rcupdate.h``：
+
+.. list-table::
+   :header-rows: 1
+   :widths: 28 52
+
+   * - API
+     - 作用
+   * - ``rcu_read_lock()`` / ``rcu_read_unlock()``
+     - 读者进入/离开 RCU 读侧临界区
+   * - ``rcu_dereference(ptr)``
+     - 读者安全解引用指针
+   * - ``rcu_assign_pointer(ptr, new)``
+     - 写者发布新指针
+   * - ``call_rcu(head, func)``
+     - 宽限期结束后回调释放旧数据
+   * - ``synchronize_rcu()``
+     - 写者阻塞等待宽限期结束
+
+读侧临界区在单核上禁止抢占，在多核上不可被调度到同 CPU 的 ``synchronize_rcu`` 阻塞，因此读者:strong:`无锁` 且开销极低。
+
+宽限期（Grace Period）
+==========================
+
+写者更新数据后，旧副本不能立即 ``kfree``——可能仍有读者持有旧指针。:strong:`宽限期` 是一段时间窗口，保证所有在更新前开始的读侧临界区都已结束：
+
+.. code-block:: text
+
+   写者: 分配 new → 修改 new → rcu_assign_pointer → call_rcu(释放 old)
+   读者: rcu_read_lock → rcu_dereference → 访问 → rcu_read_unlock
+   内核: 等待所有 CPU 经历 quiescent state → 调用 call_rcu 回调
+
+``kernel/rcu/tree.c`` 实现 Tree RCU，跟踪每个 CPU 的静止状态（quiescent state）。``synchronize_rcu()`` 会阻塞写者直到宽限期完成。
+
+内核中的典型用例
+==========================
+
+- :strong:`路由表` ：``fib_rules``、``rtable`` 更新，读路径无锁遍历
+- :strong:`模块链表` ：``module_list`` 的插入删除
+- :strong:`PID 哈希` ：进程查找与 fork/exit 并发
+- :strong:`文件系统 dentry` ：部分路径缓存更新
+
+以简化链表删除为例（内核文档风格伪代码）：
+
+.. code-block:: c
+
+   // 读者
+   rcu_read_lock();
+   struct item *p = rcu_dereference(global_head);
+   while (p) { /* 遍历 */ p = rcu_dereference(p->next); }
+   rcu_read_unlock();
+
+   // 写者删除节点
+   struct item *old = /* 从链表摘除 */;
+   call_rcu(&old->rcu, item_free_rcu);  // 宽限期后 kfree
+
+与互斥锁的选型
+==========================
+
+.. list-table::
+   :header-rows: 1
+   :widths: 22 38 38
+
+   * - 场景
+     - 推荐
+     - 原因
+   * - 读多写极少
+     - RCU
+     - 读者零锁开销
+   * - 读写均衡
+     - rwlock / mutex
+     - RCU 写者成本较高
+   * - 写频繁
+     - mutex
+     - RCU 宽限期延迟回收
+
+用户态 ``pthread_rwlock`` 对应内核 rwlock；RCU 无直接 pthread 等价物，但理解 RCU 有助于阅读内核网络、VFS 等子系统源码。
+
+阅读路线
+==========================
+
+1. ``include/linux/rcupdate.h`` —— API 定义与内存屏障语义
+2. ``kernel/rcu/tree.h`` —— Tree RCU 数据结构
+3. ``Documentation/RCU/`` —— 官方设计文档
+4. 在 ``net/ipv4/route.c`` 或 ``fs/dcache.c`` 搜索 ``rcu_read_lock`` 查看真实用法
+
 原子操作
 ========================
 

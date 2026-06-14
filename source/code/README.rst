@@ -22,7 +22,7 @@
 .. code-block:: bash
 
    sudo apt install build-essential linux-headers-$(uname -r)
-   make kernel    # 在 chap06/ 生成 hello_chardev.ko
+   make kernel    # 在 chap06/、chap07/ 生成内核模块
 
 目录与程序索引
 ==============
@@ -131,9 +131,11 @@ chap07 — 第 7 章：网络
    * - 程序
      - 说明
    * - ``echo_server``
-     - TCP echo 服务端（默认端口 9876）
+     - TCP echo 服务端（默认端口 8080）
    * - ``echo_client``
      - TCP echo 客户端
+   * - ``hello_netfilter.ko``
+     - Netfilter LOCAL_IN 钩子内核模块（``make kernel``）
 
 chap08 — 第 8 章：系统调用
 ----------------------------

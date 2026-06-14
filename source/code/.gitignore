@@ -33,6 +33,7 @@ chap06/chardev_test
 chap06/*.ko
 chap07/echo_server
 chap07/echo_client
+chap07/*.ko
 chap08/raw_syscall
 chap09/print_ids
 chap09/setuid_demo

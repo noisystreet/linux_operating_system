@@ -18,6 +18,22 @@
 
 与 VM 对比：无独立内核，启动快、开销小；隔离弱于硬件虚拟化。
 
+.. mermaid::
+
+   flowchart TB
+       subgraph container [容器进程]
+           APP["应用 nginx / bash"]
+           NS["Namespaces<br/>PID / NET / MNT / UTS / IPC"]
+           CG["cgroup<br/>CPU / Memory 限制"]
+       end
+       APP --> NS
+       APP --> CG
+       NS --> KERNEL["共享 Linux 内核"]
+       CG --> KERNEL
+       ROOTFS["OverlayFS 根文件系统"] --> APP
+
+:strong:`图` ：容器运行时组件关系
+
 OCI 标准
 ========================
 

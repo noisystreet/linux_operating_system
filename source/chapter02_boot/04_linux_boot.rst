@@ -4,6 +4,17 @@ Linux 内核启动
 
 引导加载程序把内核镜像和 initramfs 加载到内存并跳转执行后，Linux 内核接管控制权。从这一刻到屏幕上出现登录提示符，内核要完成一系列精密的初始化工作。本节跟踪内核启动的关键阶段，从汇编入口到 ``start_kernel``，再到挂载根文件系统和启动 init 进程。
 
+.. mermaid::
+
+   flowchart LR
+       FW["UEFI / BIOS"] --> BL["GRUB Bootloader"]
+       BL --> KZ["vmlinuz 解压"]
+       KZ --> SK["start_kernel()"]
+       SK --> RD["挂载 rootfs"]
+       RD --> INIT["init / systemd<br/>PID 1"]
+
+:strong:`图` ：从固件到 init 的启动链路概览
+
 内核镜像的组成
 ========================
 
