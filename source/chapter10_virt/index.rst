@@ -15,3 +15,4 @@
    05_container
    lab_namespaces
    lab_cgroups
+   outlook

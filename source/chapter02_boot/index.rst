@@ -14,3 +14,4 @@
    04_linux_boot
    05_init_system
    lab_boot
+   outlook

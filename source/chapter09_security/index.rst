@@ -15,3 +15,4 @@
    05_lsm
    lab_security_tools
    lab_security_program
+   outlook

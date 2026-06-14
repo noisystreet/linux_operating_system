@@ -16,3 +16,4 @@
    06_sync
    lab_process_tools
    lab_process_program
+   outlook

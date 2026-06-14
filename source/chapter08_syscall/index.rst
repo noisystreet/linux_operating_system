@@ -15,3 +15,4 @@
    05_write_syscall
    lab_syscall_tools
    lab_syscall_asm
+   outlook

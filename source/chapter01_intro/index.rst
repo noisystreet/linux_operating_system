@@ -13,3 +13,4 @@
    03_os_types
    04_linux_intro
    lab_sysinfo
+   outlook
