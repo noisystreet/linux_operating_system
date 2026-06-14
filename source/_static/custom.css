@@ -1,0 +1,38 @@
+/* Custom styles for Linux OS Tutorial */
+
+/* 改善中文字体渲染 */
+body {
+    font-family: "Noto Sans CJK SC", "Source Han Sans SC", "Microsoft YaHei",
+                 "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+/* 增大正文字号提升可读性 */
+div.document p,
+div.document li,
+div.document dd {
+    font-size: 15px;
+    line-height: 1.8;
+}
+
+/* 代码块字号 */
+div.highlight pre {
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/* 标题间距 */
+div.section h1 { font-size: 28px; margin-top: 32px; }
+div.section h2 { font-size: 22px; margin-top: 28px; }
+div.section h3 { font-size: 17px; margin-top: 24px; }
+
+/* admonition 样式微调 */
+div.admonition {
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+/* todo 待办醒目 */
+p.todo-title {
+    font-weight: bold;
+    color: #c7254e;
+}
