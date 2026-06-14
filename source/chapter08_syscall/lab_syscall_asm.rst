@@ -4,6 +4,10 @@
 
 用 C++ 内联汇编直接执行 ``syscall`` 指令，调用 ``getpid`` 和 ``write``，理解寄存器约定和返回值处理。
 
+.. note::
+
+   本节 ``raw_syscall.cpp`` 完整源码见 ``source/code/chap08/`` 。在 ``source/code`` 目录执行 ``make user`` 可一键编译。
+
 syscall 宏封装
 ==========================
 
