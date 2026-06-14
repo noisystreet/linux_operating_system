@@ -4,6 +4,10 @@
 
 理论结合代码，本节编写三个 C++ 程序：演示 ``fork()`` 多进程、管道通信，以及 ``pthread`` 多线程与互斥锁同步。
 
+.. note::
+
+   本节全部示例（``fork_demo``、``pipe_demo``、``thread_demo``、``mmap_shared``）源码见 ``source/code/chap03/`` 。在 ``source/code`` 目录执行 ``make user`` 可一键编译。
+
 fork 与 wait
 ==========================
 

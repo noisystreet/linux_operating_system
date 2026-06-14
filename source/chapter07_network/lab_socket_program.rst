@@ -4,6 +4,10 @@
 
 实现一个简单的 TCP echo 服务：客户端发送字符串，服务器原样返回。涵盖 socket、bind、listen、accept、connect 完整流程。
 
+.. note::
+
+   本节 ``echo_server``、``echo_client`` 源码见 ``source/code/chap07/`` 。在 ``source/code`` 目录执行 ``make user`` 可一键编译。
+
 Echo 服务器
 ==========================
 

@@ -4,6 +4,10 @@
 
 用 C++ 调用 POSIX 文件 I/O 接口，理解文件描述符、缓冲 I/O，以及 ``fsync`` 刷盘语义。
 
+.. note::
+
+   本节全部示例（``io_demo``、``sync_demo``、``seek_demo``）源码见 ``source/code/chap05/`` 。在 ``source/code`` 目录执行 ``make user`` 可一键编译。
+
 基本读写
 ==========================
 
