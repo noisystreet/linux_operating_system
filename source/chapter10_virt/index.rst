@@ -8,9 +8,10 @@
 .. toctree::
    :maxdepth: 2
 
-   01_kvm
-   02_namespaces
-   03_cgroups
-   04_container
+   01_history
+   02_kvm
+   03_namespaces
+   04_cgroups
+   05_container
    lab_namespaces
    lab_cgroups

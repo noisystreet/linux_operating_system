@@ -8,10 +8,11 @@
 .. toctree::
    :maxdepth: 2
 
-   01_process_concept
-   02_scheduling
-   03_threads
-   04_ipc
-   05_sync
+   01_history
+   02_process_concept
+   03_scheduling
+   04_threads
+   05_ipc
+   06_sync
    lab_process_tools
    lab_process_program

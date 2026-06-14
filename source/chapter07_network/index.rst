@@ -8,9 +8,10 @@
 .. toctree::
    :maxdepth: 2
 
-   01_net_stack
-   02_socket
-   03_netfilter
-   04_ebpf
+   01_history
+   02_net_stack
+   03_socket
+   04_netfilter
+   05_ebpf
    lab_network_tools
    lab_socket_program

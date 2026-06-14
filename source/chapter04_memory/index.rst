@@ -8,9 +8,10 @@
 .. toctree::
    :maxdepth: 2
 
-   01_addressing
-   02_virtual_memory
-   03_linux_mm
-   04_swap
+   01_history
+   02_addressing
+   03_virtual_memory
+   04_linux_mm
+   05_swap
    lab_mem_tools
    lab_mem_program

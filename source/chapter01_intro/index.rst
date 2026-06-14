@@ -8,8 +8,8 @@
 .. toctree::
    :maxdepth: 2
 
-   01_what_is_os
-   02_history
+   01_history
+   02_what_is_os
    03_os_types
    04_linux_intro
    lab_sysinfo

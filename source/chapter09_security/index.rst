@@ -8,9 +8,10 @@
 .. toctree::
    :maxdepth: 2
 
-   01_permission
-   02_capabilities
-   03_acls
-   04_lsm
+   01_history
+   02_permission
+   03_capabilities
+   04_acls
+   05_lsm
    lab_security_tools
    lab_security_program

@@ -8,9 +8,10 @@
 .. toctree::
    :maxdepth: 2
 
-   01_syscall_overview
-   02_impl_x86_64
-   03_vdso
-   04_write_syscall
+   01_history
+   02_syscall_overview
+   03_impl_x86_64
+   04_vdso
+   05_write_syscall
    lab_syscall_tools
    lab_syscall_asm

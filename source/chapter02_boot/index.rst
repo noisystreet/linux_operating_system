@@ -8,8 +8,9 @@
 .. toctree::
    :maxdepth: 2
 
-   01_bios_uefi
-   02_bootloader
-   03_linux_boot
-   04_init_system
+   01_history
+   02_bios_uefi
+   03_bootloader
+   04_linux_boot
+   05_init_system
    lab_boot
