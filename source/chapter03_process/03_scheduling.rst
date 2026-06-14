@@ -1,7 +1,119 @@
 ======================
-调度算法
+CPU 调度
 ======================
 
-.. todo:: 待撰写
+同一时刻，一个 CPU 核心只能执行一个进程。调度器的任务是在多个就绪进程之间选择下一个获得 CPU 的进程，并在它们之间公平、高效地分配时间。本节介绍调度指标、Linux 调度器演进和当前的 CFS 算法。
 
-本节内容正在编写中。
+为什么需要调度
+========================
+
+没有调度器，多进程系统将退化为"谁先抢到 CPU 谁一直运行"。调度器解决：
+
+- :strong:`公平性` ：每个进程都应获得合理的 CPU 时间
+- :strong:`响应性` ：交互式应用（终端、GUI）应快速响应
+- :strong:`吞吐量` ：批处理任务应尽可能高效完成
+- :strong:`实时性` ：部分任务有截止时间要求
+
+这些目标有时互相矛盾——提升交互响应可能牺牲批处理吞吐量。调度算法就是在不同场景下做权衡。
+
+调度时机
+========================
+
+内核在以下情况调用调度器（``schedule()`` 函数，``kernel/sched/core.c``）：
+
+- 进程主动放弃 CPU（如 ``sleep()``、``wait()``、阻塞 I/O）
+- 时钟中断：时间片用完，需要重新选择
+- 唤醒：等待的事件就绪，可能抢占当前进程
+- 进程退出
+
+:strong:`抢占` （preemption）指高优先级或可运行进程迫使当前进程让出 CPU。Linux 从 2.6 起对内核态也支持有限抢占（CONFIG_PREEMPT），桌面系统默认开启，保证高优先级任务能及时运行。
+
+调度策略
+========================
+
+Linux 为每个线程（调度实体）分配:strong:`调度策略` （scheduling policy）和:strong:`优先级` （priority）。常用策略：
+
+.. list-table::
+   :header-rows: 1
+   :widths: 22 48
+
+   * - 策略
+     - 说明
+   * - ``SCHED_NORMAL`` （CFS）
+     - 默认策略，普通分时进程
+   * - ``SCHED_FIFO``
+     - 实时，先进先出，运行直到主动让出或更高优先级抢占
+   * - ``SCHED_RR``
+     - 实时，时间片轮转
+   * - ``SCHED_BATCH``
+     - 批处理，降低交互优先级，减少唤醒频率
+   * - ``SCHED_IDLE``
+     - 空闲时才运行，优先级最低
+
+查看进程的调度策略和优先级：
+
+.. code-block:: bash
+
+   chrt -p <pid>
+   ps -eo pid,class,rtprio,ni,comm | head -10
+
+``ni`` 列为 nice 值（-20 到 19），仅对 CFS 有效。nice 越小，优先级越高。
+
+O(1) 调度器（历史）
+========================
+
+Linux 2.6 引入的 O(1) 调度器将进程按优先级分为 140 个队列，用位图在常数时间内找到最高优先级非空队列。它解决了 2.4 时代 O(n) 调度器在进程数多时性能下降的问题。
+
+O(1) 调度器按:strong:`时间片` 分配 CPU：每个优先级有固定时间片，用完则降到更低优先级队列。这种"过期惩罚"机制容易导致交互进程在 I/O 密集和 CPU 密集任务之间切换时响应变差。
+
+CFS：完全公平调度器
+========================
+
+2007 年，Ingo Molnar 提交的:strong:`CFS` （Completely Fair Scheduler）成为 Linux 默认调度器，沿用至今。CFS 的核心思想不是时间片，而是:strong:`虚拟运行时间` （vruntime）。
+
+每个可运行进程在红黑树（按 vruntime 排序）中排队。调度器总是选择 vruntime:strong:`最小` 的进程运行——即"欠 CPU 时间最多"的进程。运行一段时间后，其 vruntime 增加，被换出，下一个 vruntime 最小的进程运行。
+
+.. code-block:: text
+
+   vruntime += 实际运行时间 × (NICE_0_LOAD / 进程权重)
+
+权重由 nice 值决定：nice 越小，权重越大，同样实际运行时间下 vruntime 增加越慢，从而获得更多 CPU。
+
+CFS 没有固定时间片，而是动态计算"目标延迟"（``sysctl_sched_latency``，默认约 24ms）内应运行的进程数，据此调整每个进程的运行配额。进程少时，每个进程可运行较长时间；进程多时，切换更频繁。
+
+CFS 的实现位于 ``kernel/sched/fair.c``，关键函数包括 ``enqueue_entity()``、``dequeue_entity()``、``pick_next_entity()``。
+
+实时调度
+========================
+
+``SCHED_FIFO`` 和 ``SCHED_RR`` 用于实时任务，优先级范围 1–99（高于普通进程的 100–139）。实时进程可以抢占普通 CFS 进程。``SCHED_FIFO`` 进程运行直到阻塞或主动让出；``SCHED_RR`` 在同优先级间时间片轮转。
+
+.. warning::
+
+   错误的实时进程（如死循环）可能占满 CPU，导致系统无响应。设置实时优先级需要 ``CAP_SYS_NICE`` 或 root 权限，应谨慎使用。
+
+多核调度与负载均衡
+========================
+
+每个 CPU 核心有独立的:strong:`运行队列` （runqueue）。新进程优先在创建它的 CPU 上运行（缓存局部性）。当某 CPU 负载过高，:strong:`负载均衡` 机制会将任务迁移到其他 CPU。
+
+``taskset`` 可绑定进程到指定 CPU：
+
+.. code-block:: bash
+
+   taskset -c 0,1 ./my_program    # 仅在 CPU 0 和 1 上运行
+   taskset -p 0x3 <pid>           # 修改已有进程的亲和性
+
+``/proc/<pid>/status`` 中的 ``Cpus_allowed`` 和 ``Cpus_allowed_list`` 显示 CPU 亲和性掩码。
+
+cgroup 与组调度
+========================
+
+``cpu`` cgroup 控制器可限制一组进程的总 CPU 使用率。Docker、systemd 等利用 cgroup 实现资源隔离。CFS 的:strong:`组调度` （group scheduling）在 cgroup 层级上分配 CPU 带宽，确保各组之间的公平。
+
+.. code-block:: bash
+
+   # 查看进程的 cgroup
+   cat /proc/self/cgroup
+
+调度是进程模型的核心。同一进程内的多个执行流——线程——如何共享资源、如何被调度，下一节讨论。
