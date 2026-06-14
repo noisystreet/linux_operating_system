@@ -4,6 +4,10 @@
 
 查看系统 cgroup 布局，体验资源限制，并检测 KVM 与 Docker 环境。
 
+.. note::
+
+   辅助脚本 ``check_kvm.sh``、``limit_cpu.sh`` 见 ``source/code/chap10/`` 。
+
 查看 Cgroup 布局
 ==========================
 

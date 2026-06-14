@@ -32,10 +32,21 @@ test: user
 	./chap03/fork_demo
 	./chap03/pipe_demo
 	./chap03/thread_demo
+	./chap04/malloc_demo
+	./chap04/mmap_cow
 	./chap04/maps_dump | head -3
 	./chap05/io_demo
 	./chap05/seek_demo
+	./chap05/sync_demo
+	./chap05/o_direct_demo
 	./chap08/raw_syscall
 	./chap09/print_ids
 	./chap09/secure_file
+	@echo "==> network echo test"
+	@./chap07/echo_server & \
+		SERVER_PID=$$!; \
+		sleep 0.5; \
+		./chap07/echo_client 127.0.0.1 "ping" | grep -q ping; \
+		kill $$SERVER_PID 2>/dev/null || true; \
+		wait $$SERVER_PID 2>/dev/null || true
 	@echo "==> all smoke tests passed"

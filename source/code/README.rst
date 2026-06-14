@@ -104,6 +104,8 @@ chap05 — 第 5 章：文件系统
      - ``fsync()`` 刷盘语义
    * - ``seek_demo``
      - ``lseek()`` 随机访问
+   * - ``o_direct_demo``
+     - ``O_DIRECT`` 扇区对齐读取（部分文件系统可能不支持）
 
 chap06 — 第 6 章：设备驱动
 ----------------------------
@@ -167,6 +169,19 @@ chap10 — 第 10 章：虚拟化与容器
 ----------------------------------
 
 实践以 ``unshare``、``docker`` 等 shell 命令为主，见 ``chap10/README.rst`` 与教程 ``lab_namespaces.rst``、``lab_cgroups.rst``。
+
+辅助脚本：
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 70
+
+   * - 脚本
+     - 说明
+   * - ``check_kvm.sh``
+     - 检测 ``/dev/kvm`` 与 CPU 虚拟化支持
+   * - ``limit_cpu.sh``
+     - cgroup v2 CPU 限制演示（需 root）
 
 单程序编译
 ==========

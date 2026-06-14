@@ -6,7 +6,7 @@
 
 .. note::
 
-   本节全部示例（``io_demo``、``sync_demo``、``seek_demo``）源码见 ``source/code/chap05/`` 。在 ``source/code`` 目录执行 ``make user`` 可一键编译。
+   本节全部示例（``io_demo``、``sync_demo``、``seek_demo``、``o_direct_demo``）源码见 ``source/code/chap05/`` 。在 ``source/code`` 目录执行 ``make user`` 可一键编译。
 
 基本读写
 ==========================
