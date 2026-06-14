@@ -92,20 +92,6 @@ ext4 支持三种日志模式（挂载选项 ``data=``）：
 
 :strong:`多块分配器` （mballoc）尝试为相关文件分配相邻块，提升顺序读写性能。
 
-其他文件系统概览
-========================
+XFS、Btrfs、tmpfs 等文件系统的特性与适用场景见下一节 ``05_other_fs``。
 
-:strong:`XFS`
-  SGI 开发，RHEL/CentOS 默认。面向大文件和高并发，B+ 树管理空闲空间，在线扩容和 defrag。适合数据库、媒体存储。
-
-:strong:`Btrfs`
-  COW 文件系统，支持子卷、快照、压缩、校验、RAID。openSUSE/Fedora 可选为根 FS。注意 RAID5/6 仍有数据丢失风险报道，生产环境需谨慎。
-
-:strong:`F2FS`
-  三星为闪存（SSD/eMMC）设计，日志结构，减少写放大。Android 等设备常用。
-
-.. code-block:: bash
-
-   df -T    # 查看各挂载点的文件系统类型
-
-文件内容读写如何经过内核到达磁盘？涉及 page cache 和 I/O 路径，第 5 节与第 6 章块设备层衔接讨论。
+文件内容读写如何经过内核到达磁盘？涉及 page cache 和 I/O 路径，``06_io_uring`` 节与第 6 章块设备层衔接讨论。

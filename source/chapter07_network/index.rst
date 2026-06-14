@@ -15,3 +15,4 @@
    05_ebpf
    lab_network_tools
    lab_socket_program
+   lab_netfilter

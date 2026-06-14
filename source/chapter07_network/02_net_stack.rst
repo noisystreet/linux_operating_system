@@ -25,6 +25,19 @@ Linux 网络栈与 TCP/IP 模型对应，自顶向下大致为：
 
 每层处理本层首部，向上递交载荷或向下封装。:strong:`Netfilter` 钩子在各层插入，供防火墙、NAT 等处理（下节详述）。
 
+.. mermaid::
+
+   flowchart TB
+       App["用户态应用程序<br/>read / write / send / recv"]
+       App --> Sock["socket 层<br/>struct socket / sock"]
+       Sock --> Trans["传输层 TCP / UDP"]
+       Trans --> Net["网络层 IP / ICMP"]
+       Net --> Link["链路层 以太网 / ARP"]
+       Link --> Drv["设备驱动 ndo_start_xmit"]
+       Drv --> NIC["网卡硬件"]
+
+:strong:`图` ：Linux 网络协议栈分层数据流（发送方向）
+
 socket 与 sock
 ========================
 

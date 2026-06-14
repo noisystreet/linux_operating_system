@@ -111,6 +111,23 @@ Docker 与 Namespace
 
 容器内 PID 1 为应用进程，与宿主机 PID 无关。网络 namespace 有独立 ``lo``、``eth0`` （veth 对一端）。
 
+.. mermaid::
+
+   flowchart LR
+       subgraph host [宿主机 netns]
+           BR["docker0 桥接"]
+           VH["veth_host"]
+       end
+       subgraph ctr [容器 netns]
+           VE["eth0"]
+           APP["应用"]
+       end
+       VH --- VE
+       BR --- VH
+       VE --> APP
+
+:strong:`图` ：容器 veth 网络模型
+
 User Namespace
 ========================
 

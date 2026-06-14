@@ -147,6 +147,6 @@ NAT 规则通常挂在 ``PREROUTING`` （DNAT）和 ``POST_ROUTING`` （SNAT/MAS
 
 ``nf_register_net_hook`` 将函数挂到指定钩子；``init_net`` 为初始网络命名空间。容器网络在各自 netns 中可有独立钩子实例。卸载时须 ``nf_unregister_net_hook``。
 
-内核路径：``net/netfilter/``、``include/linux/netfilter.h``。生产防火墙多用 iptables/nftables 配置，模块方式适合定制深度包检测或学习。
+内核路径：``net/netfilter/``、``include/linux/netfilter.h``。动手实验见 :doc:`lab_netfilter` 与 ``source/code/chap07/hello_netfilter.c``。
 
 Netfilter 提供静态规则过滤，:strong:`eBPF` 则允许在内核中运行自定义程序，实现更灵活的观测和过滤——下一节介绍 eBPF 基础。

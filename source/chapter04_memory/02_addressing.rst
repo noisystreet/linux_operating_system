@@ -68,6 +68,19 @@ x86-64 四级页表
 
 若任一级表项的:strong:`Present` 位为 0，表示页不在内存，触发:strong:`缺页异常` （page fault），由内核处理。
 
+.. mermaid::
+
+   flowchart TD
+       VA["虚拟地址<br/>PML4:PDPT:PD:PT:Offset"] --> CR3["CR3 寄存器"]
+       CR3 --> PML4["PML4 页表"]
+       PML4 -->|"索引 9 bit"| PDPT["PDPT"]
+       PDPT -->|"索引 9 bit"| PD["PD"]
+       PD -->|"索引 9 bit"| PT["PT"]
+       PT -->|"索引 9 bit"| PFN["物理页框号"]
+       PFN --> PA["物理地址 = PFN + Offset"]
+
+:strong:`图` ：x86-64 四级页表遍历路径（page walk）
+
 页表项（PTE）中的关键标志：
 
 .. list-table::

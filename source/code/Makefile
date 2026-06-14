@@ -19,6 +19,7 @@ user:
 
 kernel:
 	@$(MAKE) -C chap06 modules
+	@$(MAKE) -C chap07 modules
 
 clean:
 	@for d in $(USER_DIRS) chap06; do \

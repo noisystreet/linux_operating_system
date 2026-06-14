@@ -22,6 +22,7 @@
 - 粗体使用 ``:strong:\`文本\``` ，不要用 Markdown 的 ``**粗体**``
 - 反引号与全角标点之间加空格，例如 ``\`text\` （说明）``
 - 表格优先使用 ``.. list-table::``
+- 架构图、流程图优先使用 ``.. mermaid::`` （需 ``sphinxcontrib-mermaid``）
 - 章节标题下划线长度须与标题文字一致
 - 示例代码目录 ``source/code/**`` 已在 ``conf.py`` 的 ``exclude_patterns`` 中排除，不参与 Sphinx 构建
 

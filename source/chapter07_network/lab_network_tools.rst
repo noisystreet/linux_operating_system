@@ -124,4 +124,4 @@ Socket 与连接
 
 观察 TCP 三次握手、回显数据、四次挥手。``ss -tan`` 中可看到 ``TIME-WAIT`` 状态，与 conntrack 条目对应。
 
-下一节编写 TCP echo 服务器和客户端，亲手完成 socket 编程全流程。
+下一节编写 TCP echo 服务器和客户端，亲手完成 socket 编程全流程。Netfilter 内核模块实验见 :doc:`lab_netfilter`。
