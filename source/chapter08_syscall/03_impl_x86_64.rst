@@ -1,7 +1,97 @@
 ======================
-x86-64 实现
+x86-64 系统调用实现
 ======================
 
-.. todo:: 待撰写
+x86-64 上，用户程序通过 ``syscall`` 指令进入内核，内核根据系统调用号查表执行对应函数，再通过 ``sysret`` 返回。本节介绍寄存器约定、入口汇编和 ``sys_call_table``。
 
-本节内容正在编写中。
+syscall 指令
+========================
+
+用户态调用（glibc 封装，简化）：
+
+.. code-block:: text
+
+   mov    rax, __NR_write    # 系统调用号
+   mov    rdi, fd            # 第 1 参数
+   mov    rsi, buf           # 第 2 参数
+   mov    rdx, count         # 第 3 参数
+   syscall                   # 陷入内核
+   # 返回后 rax 为返回值
+
+x86-64 Linux ABI 参数顺序：``rdi``、``rsi``、``rdx``、``r10``、``r8``、``r9``。注意第 4 参数用 ``r10`` 而非 ``rcx``，因 ``syscall`` 会破坏 ``rcx`` 和 ``r11``。
+
+内核入口
+========================
+
+``syscall`` 触发后，CPU 跳转到 ``entry_SYSCALL_64`` （``arch/x86/entry/entry_64.S``）：
+
+1. 保存用户态 ``rsp`` 到 ``rsp_scratch``，切换到内核栈
+2. 保存用户态寄存器到 ``pt_regs`` 结构
+3. 调用 ``do_syscall_64()`` （``arch/x86/entry/common.c``）
+4. ``do_syscall_64`` 从 ``regs->ax`` 取系统调用号，查 ``sys_call_table``
+5. 调用 ``sys_call_table[nr](regs)``
+6. 返回值写入 ``regs->ax``
+7. 恢复寄存器，``sysret`` 返回用户态
+
+sys_call_table
+========================
+
+:strong:`sys_call_table` 是函数指针数组，下标为系统调用号，值为内核实现函数地址。
+
+.. code-block:: c
+
+   // 简化概念
+   asmlinkage long (*sys_call_table[])(struct pt_regs *regs) = {
+       [0 ... __NR_syscall_max] = &sys_ni_syscall,
+       [__NR_read]    = &sys_read,
+       [__NR_write]   = &sys_write,
+       // ...
+   };
+
+查看符号（需 root，且内核未隐藏 kallsyms）：
+
+.. code-block:: bash
+
+   sudo cat /proc/kallsyms | grep sys_call_table
+   sudo cat /proc/kallsyms | grep sys_write
+
+``CONFIG_HIDE_SYSCALL_TABLE`` 等安全选项可能隐藏符号。
+
+SYSCALL_DEFINE 宏
+========================
+
+内核用宏定义系统调用，统一参数提取和 trace 点：
+
+.. code-block:: c
+
+   SYSCALL_DEFINE3(write, unsigned int, fd,
+                    const char __user *, buf, size_t, count)
+   {
+       return ksys_write(fd, buf, count);
+   }
+
+``__user`` 注解表示指针指向用户空间，访问前需 ``copy_from_user``/``copy_to_user`` 检查。
+
+参数传递与拷贝
+========================
+
+内核:strong:`不能` 信任用户态指针。``write(fd, buf, count)`` 中，内核通过 ``copy_from_user`` 将 ``buf`` 内容拷贝到内核缓冲区，或直接使用 ``access_ok`` 验证后访问。恶意指针可能导致内核崩溃或信息泄露，必须严格检查。
+
+返回值与 errno
+========================
+
+内核函数返回 ``long``：成功时返回非负值（如写入字节数），失败时返回 ``-errno`` （如 ``-EBADF``）。glibc 的 ``syscall`` 包装将负返回值转为设置 ``errno`` 并返回 -1。
+
+.. code-block:: c
+
+   // glibc 侧（概念）
+   long ret = INLINE_SYSCALL(write, 3, fd, buf, count);
+   if (ret < 0) { errno = -ret; return -1; }
+   return ret;
+
+其他架构
+========================
+
+ARM64 用 ``svc #0``，系统调用号在 ``x8``，参数在 ``x0-x5``。RISC-V 用 ``ecall``。各架构 ABI 不同，但"号 + 参数 + 陷入内核 + 查表"的模式一致。
+
+并非所有"系统调用"都走完整路径——``clock_gettime`` 等可能通过 vDSO 在用户态完成。下一节介绍 vDSO 机制。
