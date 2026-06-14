@@ -16,3 +16,4 @@
    06_io_uring
    lab_fs_tools
    lab_fs_program
+   outlook
