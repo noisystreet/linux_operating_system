@@ -1,6 +1,8 @@
 # Linux 操作系统教程
 
 > 基于 Linux 的操作系统原理入门教程，使用 Sphinx + reStructuredText 构建。
+>
+> 在线文档：[https://linux-operating-system.readthedocs.io/zh-cn/latest/](https://linux-operating-system.readthedocs.io/zh-cn/latest/)
 
 ## 目标读者
 
