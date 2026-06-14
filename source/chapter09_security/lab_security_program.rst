@@ -6,7 +6,7 @@
 
 .. note::
 
-   本节全部示例（``print_ids``、``setuid_demo``、``keepcaps_demo``、``secure_file``）源码见 ``source/code/chap09/`` 。在 ``source/code`` 目录执行 ``make user`` 可一键编译。
+   本节全部示例（``print_ids``、``setuid_demo``、``keepcaps_demo``、``secure_file``、``seccomp_demo``）源码见 ``source/code/chap09/`` 。在 ``source/code`` 目录执行 ``make user`` 可一键编译。
 
 获取与打印 UID
 ==========================

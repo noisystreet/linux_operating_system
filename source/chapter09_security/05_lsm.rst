@@ -90,6 +90,36 @@ seccomp 与沙箱
 
 容器默认 seccomp profile 禁止危险 syscall（如 ``reboot``、``kexec_load``）。
 
+LSM 堆叠与 BPF LSM
+==========================
+
+Linux 5.4+ 支持多个 LSM 同时启用（:strong:`LSM stacking` ）。查看当前顺序：
+
+.. code-block:: bash
+
+   cat /sys/kernel/security/lsm
+   # 例如 lockdown,capability,landlock,yama,apparmor
+
+:strong:`Landlock` （较新 LSM）允许:strong:`非特权进程` 自 sandbox，与 seccomp 类似但可限制文件系统路径。:strong:`BPF LSM` 允许用 eBPF 程序实现自定义 MAC 钩子，适合云原生策略引擎。
+
+seccomp 过滤器原理
+==========================
+
+``SECCOMP_MODE_FILTER`` 使用经典 BPF 指令检查每次 syscall 的编号与参数：
+
+.. code-block:: text
+
+   syscall 进入内核
+        → seccomp BPF 程序评估
+        → ALLOW / ERRNO / TRACE / KILL
+
+Docker 的 ``default.json`` profile 禁止约 40+ 个 syscall（``keyctl``、``bpf``、``mount`` 等）。自定义 profile 可用 ``docker run --security-opt seccomp=profile.json`` 加载。
+
+与第 8 章的联系
+==========================
+
+seccomp 过滤器在内核 ``seccomp_run_filters()`` 中执行，位于 syscall 进入路径的早期。理解第 8 章 x86-64 syscall 约定，有助于阅读 seccomp-BPF 如何访问 ``struct seccomp_data`` 中的 ``nr`` 和参数。
+
 安全实践小结
 ========================
 

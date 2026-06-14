@@ -30,6 +30,45 @@ Linux Namespaces
 
 进程创建时继承父进程的 namespace。``clone()`` 或 ``unshare()`` 可创建新 namespace。
 
+clone 与 unshare 标志
+==========================
+
+.. list-table::
+   :header-rows: 1
+   :widths: 22 48
+
+   * - 标志
+     - 含义
+   * - ``CLONE_NEWPID``
+     - 新 PID namespace
+   * - ``CLONE_NEWNET``
+     - 新网络 namespace
+   * - ``CLONE_NEWNS``
+     - 新 mount namespace
+   * - ``CLONE_NEWUTS``
+     - 新 UTS（主机名）
+   * - ``CLONE_NEWIPC``
+     - 新 IPC namespace
+   * - ``CLONE_NEWUSER``
+     - 新 user namespace
+   * - ``CLONE_NEWCGROUP``
+     - 新 cgroup namespace 视图
+
+``unshare(1)`` 对应当前进程调用 ``unshare()``；``docker run`` 底层由 runc 组合上述标志创建隔离环境。内核实现见 ``kernel/nsproxy.c``、``kernel/pid_namespace.c``、``net/core/net_namespace.c`` 等。
+
+veth 与容器网络
+========================
+
+容器默认网络模型：
+
+.. code-block:: text
+
+   容器 netns: eth0 ── veth 对 ── vethXXX ── docker0（桥接）
+                                              │
+                                         宿主机路由/NAT
+
+创建容器时，containerd 在宿主机创建 veth 对，将一端移入容器 netns 并命名为 ``eth0``，另一端接入 ``docker0`` 或自定义 bridge。因此容器内 ``ip addr`` 可见独立 IP，而宿主机 ``ip link`` 可见 ``veth*`` 接口。
+
 unshare 实验
 ========================
 

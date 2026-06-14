@@ -38,3 +38,4 @@ chap09/print_ids
 chap09/setuid_demo
 chap09/keepcaps_demo
 chap09/secure_file
+chap09/seccomp_demo

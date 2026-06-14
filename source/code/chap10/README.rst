@@ -17,10 +17,13 @@
      - 检测 KVM 与 QEMU 环境
    * - ``limit_cpu.sh``
      - cgroup v2 CPU 限制演示（需 root）
+   * - ``setup_veth_netns.sh``
+     - veth + 网络命名空间组网（需 root）
 
 .. code-block:: bash
 
    ./check_kvm.sh
-   sudo ./limit_cpu.sh 3    # 受限运行 3 秒
+   sudo ./limit_cpu.sh 3
+   sudo ./setup_veth_netns.sh ns1
 
 请参阅教程中的 ``lab_namespaces.rst`` 与 ``lab_cgroups.rst``。

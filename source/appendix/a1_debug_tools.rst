@@ -2,7 +2,7 @@
 调试工具
 ======================
 
-理解操作系统离不开观察内核与进程行为。本附录汇总教程中涉及的及常用的 Linux 调试与追踪工具，便于按场景选用。
+理解操作系统离不开观察内核与进程行为。本附录汇总教程中涉及的及常用的 Linux 调试与追踪工具，并按场景提供端到端 walkthrough。
 
 strace / ltrace
 ========================
@@ -64,6 +64,46 @@ perf
 
 ``perf probe`` 可动态添加内核/用户探针。教程第 8 章用 ``perf`` 统计 syscall。
 
+场景一：strace 排查权限拒绝
+================================
+
+第 9 章权限实验失败时，用 ``strace`` 定位被拒绝的 syscall：
+
+.. code-block:: bash
+
+   touch /tmp/secret && chmod 000 /tmp/secret
+   strace cat /tmp/secret 2>&1 | tail -5
+
+典型输出含 ``openat(...) = -1 EACCES (Permission denied)``。结合 ``errno`` 与 ``man 2 openat`` 理解 DAC 检查顺序。若启用 SELinux，还需 ``ausearch -m avc`` 查看 MAC 拒绝。
+
+场景二：GDB 分析 SIGSEGV（呼应第 4 章）
+==========================================
+
+.. code-block:: bash
+
+   cd source/code/chap04
+   make segv_demo
+   ulimit -c unlimited
+   ./segv_demo    # 产生 core
+
+   gdb ./segv_demo core
+   (gdb) bt
+   (gdb) list
+   (gdb) info registers
+
+``bt`` 显示崩溃栈；空指针解引用通常落在 ``main`` 附近。生产环境需开启 ``kernel.core_pattern`` 并注意 core 文件可能含敏感数据。
+
+场景三：perf 分析多线程程序（呼应第 3 章）
+============================================
+
+.. code-block:: bash
+
+   cd source/code/chap03 && make thread_demo
+   perf record -g ./thread_demo
+   perf report --stdio | head -40
+
+查看 CPU 时间是否均匀分布在 ``pthread_mutex_lock`` 与各线程函数。若锁竞争严重，``perf`` 会显示 mutex 占用高比例，可考虑缩小临界区或读写锁。
+
 其他工具
 ========================
 
@@ -85,3 +125,25 @@ perf
      - 内核与用户日志
 
 选择建议：用户态问题先 ``strace``/``gdb``；性能问题 ``perf``；内核路径 ``ftrace``/``bpftrace``；网络 ``tcpdump``。
+
+与正文章节对照
+========================
+
+.. list-table::
+   :header-rows: 1
+   :widths: 22 48
+
+   * - 教程章节
+     - 推荐工具
+   * - 第 3 章 进程/线程
+     - ``strace -f``、``gdb info threads``、``perf record -g``
+   * - 第 4 章 内存
+     - ``gdb`` core、``/proc/self/maps``、``valgrind``
+   * - 第 6 章 设备
+     - ``dmesg``、``udevadm monitor``、``modprobe -v``
+   * - 第 7 章 网络
+     - ``tcpdump``、``ss``、``bpftrace``
+   * - 第 8 章 系统调用
+     - ``strace -c``、``perf trace``
+   * - 第 10 章 容器
+     - ``nsenter``、``systemd-cgls``、``bpftool``

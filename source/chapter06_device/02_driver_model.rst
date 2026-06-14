@@ -82,4 +82,61 @@ x86 PC 主要使用 ACPI 枚举硬件，设备树多见于树莓派、手机 SoC
 
 ``/lib/modules/$(uname -r)/`` 存放模块文件，``modules.dep`` 描述依赖关系。
 
+PCI 设备 sysfs 导览
+==========================
+
+以 PCI 网卡为例，从用户态命令追踪到 sysfs 路径：
+
+.. code-block:: bash
+
+   lspci | grep -i ethernet
+   # 00:03.0 Ethernet controller: Intel Corporation 82540EM
+
+   ls -l /sys/bus/pci/devices/0000:00:03.0/
+   cat /sys/bus/pci/devices/0000:00:03.0/vendor
+   cat /sys/bus/pci/devices/0000:00:03.0/device
+   ls -l /sys/bus/pci/devices/0000:00:03.0/driver    # 绑定的驱动
+
+若 ``driver`` 符号链接存在，表示设备已绑定驱动（如 ``e1000``、``virtio_net``）。``modinfo e1000`` 可查看模块参数；``dmesg | grep e1000`` 可见 probe 日志。
+
+probe 调用链（简化）
+==========================
+
+设备被发现或模块加载时，内核执行匹配与绑定：
+
+.. code-block:: text
+
+   设备注册 device_add()
+        → bus_probe_device()
+        → driver_probe_device()
+        → drv->probe(dev)     # 驱动初始化
+        → 注册 /dev、中断、sysfs 属性
+
+关键源码（阅读路线）：
+
+- ``drivers/base/core.c`` —— ``device_add()``、``bus_probe_device()``
+- ``drivers/base/dd.c`` —— ``driver_probe_device()``
+- 具体驱动 ``drivers/net/ethernet/intel/e1000/e1000_main.c`` 等的 ``probe`` 函数
+
+``remove`` 路径在设备热拔或 ``rmmod`` 时调用，须释放 ``probe`` 中申请的资源，否则泄漏或 oops。
+
+uevent 与模块自动加载
+==========================
+
+设备插入或注册时，内核向用户空间发送:strong:`uevent` ，``systemd-udevd`` 接收后按规则创建设备节点、设置权限或加载模块：
+
+.. code-block:: text
+
+   kernel: device_add() → kobject_uevent()
+        → netlink KOBJECT_UEVENT
+        → udevd 匹配规则
+        → modprobe / chmod / ln -s
+
+.. code-block:: bash
+
+   udevadm monitor --kernel    # 实时观察内核 uevent
+   cat /lib/modules/$(uname -r)/modules.alias | grep pci
+
+``modprobe`` 根据 ``alias`` 表自动加载匹配驱动，无需手工 ``insmod``。这与第 6 章 ``lab_char_driver`` 手动注册形成对比——PC 上多数设备由总线层自动管理。
+
 设备类型决定 I/O 方式——字符设备、块设备、网络设备各有不同的接口和子系统。下一节分别介绍。

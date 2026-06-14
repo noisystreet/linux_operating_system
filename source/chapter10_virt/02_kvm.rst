@@ -89,3 +89,57 @@ KVM vs 容器
      - MB 级应用层
 
 需要运行不同内核或强隔离时用 KVM；微服务、CI/CD 等场景多用容器。容器隔离依赖 Namespaces 和 Cgroups——下节介绍。
+
+EPT/NPT 二级地址转换
+==========================
+
+客户机操作系统使用:strong:`GPA` （Guest Physical Address）访问"物理"内存，KVM 借助硬件:strong:`二级页表` 将其翻译为宿主机:strong:`HPA` （Host Physical Address）：
+
+.. code-block:: text
+
+   客户机虚拟地址 (GVA)
+        → 客户机页表 → GPA
+        → EPT/NPT（硬件）→ HPA
+        → 宿主机物理内存
+
+Intel 称:strong:`EPT` （Extended Page Tables），AMD 称:strong:`NPT` （Nested Page Tables）。相比软件:strong:`影子页表` ，硬件 walk 大幅降低 VM 内存访问开销，是 KVM 实用化的关键。
+
+QEMU 启动流程详解
+==========================
+
+典型启动参数含义：
+
+.. code-block:: bash
+
+   qemu-system-x86_64 \
+       -enable-kvm \          # 使用 /dev/kvm 硬件加速
+       -cpu host \            # 将宿主机 CPU 特性暴露给客户机
+       -m 2048 \              # 内存 2 GiB
+       -smp 2 \               # 2 个 vCPU
+       -drive file=disk.qcow2,format=qcow2,if=virtio \  # virtio 磁盘
+       -cdrom installer.iso \ # 从 ISO 安装
+       -boot d                # 从光驱启动
+
+:strong:`qcow2` 是 QEMU 的稀疏磁盘格式，支持快照。安装完成后去掉 ``-cdrom`` 从硬盘启动。``libvirt`` 与 ``virt-manager`` 封装了上述参数，底层仍是 QEMU + KVM。
+
+virtio 半虚拟化
+==========================
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 38 38
+
+   * - 设备
+     - 全模拟（如 e1000）
+     - virtio
+   * - 磁盘
+     - IDE/SATA 模拟，兼容性好
+     - virtio-blk，需驱动，IOPS 高
+   * - 网卡
+     - e1000 模拟
+     - virtio-net，批量收发，低 CPU 占用
+   * - 实现
+     - QEMU 纯软件
+     - 客户机驱动与宿主机共享队列（virtqueue）
+
+现代 Linux 发行版安装镜像通常内置 virtio 驱动。云厂商的 VM 几乎一律使用 virtio 以获得接近裸金属的 I/O 性能。

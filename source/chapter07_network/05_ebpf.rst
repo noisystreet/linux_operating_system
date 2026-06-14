@@ -52,6 +52,33 @@ XDP 可在驱动层直接丢弃 DDoS 流量，延迟极低。Cilium 等容器网
    # 示例：跟踪 connect 系统调用（需安装 bcc-tools）
    sudo biolatency-bpfcc
 
+bpftrace 一行实验
+==========================
+
+安装 ``bpftrace`` 后，无需编写 C 即可探测内核：
+
+.. code-block:: bash
+
+   # 统计各进程 connect() 调用次数
+   sudo bpftrace -e 'tracepoint:syscalls:sys_enter_connect { @[comm] = count(); }'
+
+   # 跟踪本机 TCP 连接建立（按 PID）
+   sudo bpftrace -e 'kprobe:tcp_v4_connect /pid == $1/ { printf("%s\n", comm); }' -p $(pgrep echo_server)
+
+按 ``Ctrl-C`` 结束并打印聚合结果。bpftrace 脚本在启动时由 LLVM 编译为 eBPF 字节码，经 ``bpf()`` 加载。
+
+验证器常见拒绝原因
+==========================
+
+eBPF 验证器（``kernel/bpf/verifier.c``）在加载前静态分析程序，典型拒绝原因：
+
+- 未初始化的栈变量被读取
+- 指针运算越界或类型不匹配
+- 循环无界（无法证明终止）
+- 访问未授权的 map 或 helper
+
+初学者可先用 ``bpftrace`` 和 ``bpftool prog dump xlated`` 观察已加载程序的指令，再过渡到 libbpf CO-RE 开发。
+
 map 与用户态通信
 ========================
 

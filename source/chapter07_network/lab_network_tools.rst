@@ -84,4 +84,44 @@ Socket 与连接
 
 ``ping`` 使用 ICMP，``traceroute`` 显示路径上各跳。防火墙可能阻止 ICMP，ping 失败不一定表示网络不通。
 
+网络命名空间与 bridge
+==========================
+
+.. code-block:: bash
+
+   sudo ip netns add testns
+   sudo ip link add br0 type bridge
+   sudo ip link set br0 up
+   # 配合 setup_veth_netns.sh 或 lab_namespaces 中的 veth 实验
+
+``ip netns exec testns ss -tlnp`` 在隔离环境中查看监听端口，与宿主机互不可见（除非通过 veth/bridge 连接）。
+
+连接跟踪表
+==========================
+
+.. code-block:: bash
+
+   cat /proc/net/nf_conntrack | head
+   conntrack -L 2>/dev/null | head
+
+``nf_conntrack`` 记录 TCP 状态（``ESTABLISHED``、``TIME_WAIT`` 等），iptables ``-m state --state ESTABLISHED,RELATED`` 依赖此表。容器大量短连接时，conntrack 表满会导致新连接失败，需调 ``net.netfilter.nf_conntrack_max``。
+
+与 Netfilter 钩子对照
+==========================
+
+抓取经过本机 8080 的包，对照 ``lab_socket_program`` 的 echo 服务：
+
+.. code-block:: bash
+
+   # 终端 1：启动 echo_server
+   cd source/code/chap07 && ./echo_server
+
+   # 终端 2：抓包
+   sudo tcpdump -i lo port 8080 -nn
+
+   # 终端 3：客户端
+   ./echo_client 127.0.0.1 "test"
+
+观察 TCP 三次握手、回显数据、四次挥手。``ss -tan`` 中可看到 ``TIME-WAIT`` 状态，与 conntrack 条目对应。
+
 下一节编写 TCP echo 服务器和客户端，亲手完成 socket 编程全流程。
