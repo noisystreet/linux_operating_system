@@ -96,4 +96,37 @@ Linux 几乎无处不在。这里列几个和你日常会有交集的场景：
 
 准备好进入动手环节了吗？下一节我们用几条命令，看看你面前这个 Linux 系统的具体面貌。
 
-.. todo:: 补充查看内核配置的方法（zcat /proc/config.gz | less），以及 Linux 各发行版安装量的简要数据。
+查看内核配置
+==========================
+
+运行中的内核编译选项可通过以下方式查看（若发行版启用了该功能）：
+
+.. code-block:: bash
+
+   # 部分发行版将配置压缩存放在 /proc
+   zcat /proc/config.gz 2>/dev/null | less
+
+   # 或查看 /boot 中的配置文件
+   ls /boot/config-$(uname -r)
+
+``CONFIG_*`` 选项决定内核是否包含某驱动、安全特性或调试功能。自行编译内核时，通常以当前配置为起点（见 :doc:`/appendix/a2_build_kernel`）。
+
+主流发行版概况
+==========================
+
+.. list-table::
+   :header-rows: 1
+   :widths: 25 75
+
+   * - 发行版
+     - 特点与场景
+   * - Debian / Ubuntu
+     - 社区广泛，服务器与桌面均常见；Ubuntu 在 WSL 与云镜像中占有率高
+   * - RHEL / Fedora / CentOS Stream
+     - 企业级支持，RHEL 在商用服务器市场占重要份额
+   * - Arch Linux
+     - 滚动更新，面向进阶用户
+   * - Android
+     - 基于 Linux 内核的移动系统，全球活跃设备数以十亿计
+
+精确的安装量难以统计（开源系统可自由复制），但服务器、超级计算机与云基础设施领域，Linux 长期占据绝对多数。

@@ -6,7 +6,7 @@
 
 .. note::
 
-   本节 ``mini_init.cpp`` 的完整源码见 ``source/code/chap02/`` 。在 ``source/code`` 目录执行 ``make user`` 可一键编译全部用户态示例。
+   本节 ``mini_init.cpp`` 的完整源码见 ``source/code/chap02/`` ，initramfs 打包脚本为 ``build_initramfs.sh`` 。在 ``source/code`` 目录执行 ``make user`` 可一键编译全部用户态示例。
 
 查看启动日志
 ==========================
@@ -215,7 +215,18 @@ QEMU 实验（进阶）
 
 如果一切正常，QEMU 窗口中会看到 ``mini-init: PID=1 启动`` 的输出，然后进入 shell。
 
-.. todo:: 补充完整的 initramfs 制作脚本和内核编译步骤，链接到附录 B。
+initramfs 制作脚本
+==========================
+
+仓库提供辅助脚本，将 ``mini_init`` 打包为 cpio 镜像：
+
+.. code-block:: bash
+
+   cd source/code/chap02
+   make
+   ./build_initramfs.sh    # 生成 initramfs.cpio.gz
+
+内核编译的完整流程见 :doc:`/appendix/a2_build_kernel`。获得 ``bzImage`` 后，用上一节的 QEMU 命令加载 ``initramfs.cpio.gz`` 即可在隔离环境中观察自定义 init 行为。
 
 启动流程回顾
 ==========================

@@ -200,20 +200,40 @@ make clean
 make serve
 ```
 
+## 示例代码
+
+各章 `lab_*.rst` 中的 C/C++ 示例已落地为可编译源码，位于 `source/code/`：
+
+```bash
+cd source/code
+make user    # 编译全部用户态示例
+make test    # 编译并运行冒烟测试
+make kernel  # 编译第 6 章内核模块（需 linux-headers）
+```
+
+详见 `source/code/README.rst`。示例代码许可为 [MIT](LICENSE-code)。
+
+贡献方式见 [CONTRIBUTING.rst](CONTRIBUTING.rst)。
+
 ## 项目结构
 
 ```
 .
 ├── README.md              # 项目规划（本文件）
+├── CONTRIBUTING.rst       # 贡献指南
 ├── .gitignore
+├── .github/workflows/     # CI（文档构建 + 示例测试）
 ├── Makefile               # Sphinx 构建入口
 ├── requirements.txt       # Python 依赖
+├── LICENSE                # 文档许可 CC BY 4.0
+├── LICENSE-code           # 示例代码许可 MIT
 ├── source/
 │   ├── conf.py            # Sphinx 配置
 │   ├── index.rst          # 文档首页
 │   ├── glossary.rst       # 术语表
 │   ├── _static/           # 静态资源
 │   ├── _templates/        # Jinja2 模板
+│   ├── code/              # 各章可编译示例（不参与 Sphinx 构建）
 │   ├── chapter01_intro/   # 第 1 章
 │   ├── chapter02_boot/    # 第 2 章
 │   ├── chapter03_process/ # 第 3 章

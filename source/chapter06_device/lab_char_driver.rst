@@ -199,4 +199,50 @@ Makefile
 - ``man 4 charsets``、LDD3（Linux Device Drivers, 3rd edition）相关章节
 - ``/proc/devices`` 与 ``Documentation/admin-guide/devices.txt``
 
-.. todo:: 补充使用 ioctl 扩展驱动的示例，以及 platform 设备树匹配简介。
+用 ioctl 扩展驱动
+==========================
+
+字符设备除 read/write 外，常用 ``ioctl`` 传递设备专用命令。在 ``file_operations`` 中增加：
+
+.. code-block:: c
+
+   #include <linux/ioctl.h>
+
+   #define HELLO_MAGIC 'h'
+   #define HELLO_RESET _IO(HELLO_MAGIC, 0)
+   #define HELLO_GET_LEN _IOR(HELLO_MAGIC, 1, int)
+
+   static long hello_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
+   {
+       switch (cmd) {
+       case HELLO_RESET:
+           buf_len = 0;
+           return 0;
+       case HELLO_GET_LEN:
+           return put_user(buf_len, (int __user *)arg);
+       default:
+           return -ENOTTY;
+       }
+   }
+
+用户态通过 ``ioctl(fd, HELLO_RESET)`` 调用。``_IO`` / ``_IOR`` 宏保证命令号不与系统其他驱动冲突（需唯一 ``MAGIC`` 字符）。
+
+Platform 设备与设备树（简介）
+================================
+
+嵌入式平台上，硬件信息常由:strong:`设备树` （Device Tree）描述，内核在启动时解析 ``.dtb`` 并创建 ``platform_device``。驱动通过 ``of_match_table`` 与设备树节点 ``compatible`` 字符串匹配：
+
+.. code-block:: c
+
+   static const struct of_device_id hello_of_match[] = {
+       { .compatible = "example,hello-chardev" },
+       { /* sentinel */ }
+   };
+   MODULE_DEVICE_TABLE(of, hello_of_match);
+
+   static struct platform_driver hello_platform_driver = {
+       .probe = hello_probe,
+       .driver = { .name = "hello_chardev", .of_match_table = hello_of_match },
+   };
+
+PC 上常见的 PCI/USB 设备则通过总线层自动匹配，原理类似：内核根据设备 ID 绑定对应 ``driver``。本教程的 ``hello_chardev`` 采用手动注册设备号的最小方式，便于理解 ``file_operations`` 核心流程。

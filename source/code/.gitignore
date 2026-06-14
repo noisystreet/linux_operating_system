@@ -15,6 +15,7 @@ Module.symvers
 # 各章可执行文件（由 Makefile 生成）
 chap01/sysinfo
 chap02/mini_init
+chap02/initramfs.cpio.gz
 chap03/fork_demo
 chap03/pipe_demo
 chap03/thread_demo
@@ -27,6 +28,7 @@ chap04/mmap_cow
 chap05/io_demo
 chap05/sync_demo
 chap05/seek_demo
+chap05/o_direct_demo
 chap06/chardev_test
 chap06/*.ko
 chap07/echo_server

@@ -116,4 +116,30 @@
 - `man proc` —— /proc 文件系统的完整文档
 - 浏览 `/proc/self/` —— 当前进程自己的 proc 条目
 
-.. todo:: 增加更多 /proc 文件的实验操作，比如修改 /proc/sys/ 下的运行时参数。
+探索 /proc/sys 运行时参数
+==========================
+
+``/proc/sys/`` 暴露可在运行时调整的内核参数（通过 ``sysctl`` 接口）。:strong:`只读实验` 示例：
+
+.. code-block:: bash
+
+   # 查看当前主机名（与 hostname 命令相关）
+   cat /proc/sys/kernel/hostname
+
+   # 查看 IP 转发是否开启（0=关，1=开）
+   cat /proc/sys/net/ipv4/ip_forward
+
+   # 用 sysctl 读取（与 cat /proc/sys/... 等价）
+   sysctl kernel.hostname
+   sysctl vm.swappiness
+
+修改示例（:strong:`需 root` ，请在虚拟机中尝试）：
+
+.. code-block:: bash
+
+   # 临时降低 swap 使用倾向（重启后恢复）
+   sudo sysctl -w vm.swappiness=10
+
+   # 持久化：写入 /etc/sysctl.d/*.conf 后执行 sysctl -p
+
+``sysctl -a`` 可列出全部可调参数。修改前请查阅文档，错误值可能影响稳定性或安全。

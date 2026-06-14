@@ -87,6 +87,41 @@ GNU/Linux 与开源运动
 
 下一节，我们正式定义什么是操作系统，以及它到底做了些什么。
 
----
+关键人物与事件时间线
+==========================
 
-.. todo:: 补充关键人物和事件的详细时间线，以及更多历史趣闻。
+.. list-table::
+   :header-rows: 1
+   :widths: 15 25 60
+
+   * - 年代
+     - 人物 / 项目
+     - 意义
+   * - 1960s
+     - Frederick Brooks、OS/360
+     - 大型批处理操作系统，催生《人月神话》
+   * - 1969
+     - Ken Thompson、Dennis Ritchie、Unix
+     - 用 C 重写内核，奠定可移植操作系统范式
+   * - 1973
+     - Xerox PARC、Alto
+     - 图形界面与鼠标交互的先驱
+   * - 1983
+     - Richard Stallman、GNU 项目
+     - 自由软件运动，为 Linux 提供用户态工具链
+   * - 1987
+     - MINIX（Andrew Tanenbaum）
+     - 教学用微内核，启发 Linus 编写 Linux
+   * - 1991
+     - Linus Torvalds、Linux 0.01
+     - 开源宏内核操作系统，后成为服务器与云基础设施主流
+   * - 2007
+     - Google、Android
+     - Linux 内核进入移动设备，用户规模达数十亿
+   * - 2013
+     - Docker
+     - 将 Namespace/Cgroup 包装为易用容器，推动云原生
+
+趣闻：Linux 的吉祥物企鹅 Tux，源于 Linus 在澳大利亚被小企鹅咬伤的经历——后来这只企鹅成了开源社区最知名的图标之一。
+
+---

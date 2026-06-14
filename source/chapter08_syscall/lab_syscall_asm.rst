@@ -90,7 +90,53 @@ glibc 的 ``syscall()`` 函数提供类似功能，生产代码应使用标准 A
 
 .. warning::
 
-   修改内核并加载自定义 syscall 仅适合实验环境。发行版内核通常不保留可插拔的 syscall 槽位，:strong:`ioctl`` 和 netlink 是更常见的内核-用户扩展方式。
+   修改内核并加载自定义 syscall 仅适合实验环境。发行版内核通常不保留可插拔的 syscall 槽位，:strong:`ioctl` 和 netlink 是更常见的内核-用户扩展方式。
+
+自定义 syscall 补丁示例（仅文档）
+====================================
+
+以下展示在主线内核源码中添加 ``hello`` 系统调用的典型步骤，:strong:`不纳入本仓库构建` ，仅供实验内核参考。
+
+**1. 注册系统调用号** （``arch/x86/entry/syscalls/syscall_64.tbl``）：
+
+.. code-block:: text
+
+   548 common  hello   sys_hello
+
+**2. 实现内核函数** （``kernel/hello.c``）：
+
+.. code-block:: c
+
+   #include <linux/syscalls.h>
+   #include <linux/uaccess.h>
+
+   SYSCALL_DEFINE2(hello, char __user *, buf, int, len)
+   {
+       char kbuf[64];
+       if (len <= 0 || len >= sizeof(kbuf))
+           return -EINVAL;
+       if (copy_from_user(kbuf, buf, len))
+           return -EFAULT;
+       pr_info("hello syscall: %.*s\n", len, kbuf);
+       return len;
+   }
+
+**3. 加入构建** （``kernel/Makefile``）：``obj-y += hello.o``
+
+**4. 重新编译安装内核** 后，用户态调用：
+
+.. code-block:: cpp
+
+   #include <sys/syscall.h>
+   #include <unistd.h>
+
+   #ifndef __NR_hello
+   #define __NR_hello 548   // 与 tbl 中编号一致
+   #endif
+
+   syscall(__NR_hello, "world", 5);
+
+每次内核升级需重新打补丁。生产环境更推荐通过现有 syscall（``ioctl``、``netlink``、``bpf``）扩展功能。
 
 与第 1 章的联系
 ==========================
@@ -105,5 +151,3 @@ glibc 的 ``syscall()`` 函数提供类似功能，生产代码应使用标准 A
 - ``man 2 syscall``、``man 2 syscalls``
 - 内核源码 ``arch/x86/entry/entry_64.S``、``include/linux/syscalls.h``
 - 《Linux 内核设计与实现》系统调用章节
-
-.. todo:: 补充完整的自定义 syscall 内核补丁示例（仅文档，不纳入主线内核构建）。
