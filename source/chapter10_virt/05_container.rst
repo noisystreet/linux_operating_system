@@ -84,6 +84,49 @@ chroot 与 pivot_root
 
 Docker 自动化了上述步骤。实践环节将用 ``unshare`` 和 cgroup 分步体验。
 
+最小容器分步清单
+==========================
+
+将 ``chroot``、namespace、cgroup 组合为可运行环境，需依次完成：
+
+.. list-table::
+   :header-rows: 1
+   :widths: 12 58
+
+   * - 步骤
+     - 操作
+   * - 1. rootfs
+     - ``debootstrap`` 或解压 OCI 镜像层到目录
+   * - 2. mount ns
+     - ``unshare --mount``，避免影响宿主机挂载表
+   * - 3. 根切换
+     - ``pivot_root`` 或 ``mount --bind`` + ``chroot``
+   * - 4. 伪文件系统
+     - 挂载 ``proc``、``sys``、``dev``（``devtmpfs``）
+   * - 5. 其他 ns
+     - PID、UTS、IPC、NET（``unshare`` 标志组合）
+   * - 6. cgroup
+     - 写入 ``cgroup.procs``，设置 ``memory.max``、``cpu.max``
+   * - 7. 安全
+     - capability 降权、seccomp profile、只读根（可选）
+   * - 8. 启动
+     - ``exec`` 容器内 PID 1 进程
+
+runc 的 ``config.json`` （OCI runtime spec）即上述参数的序列化。``docker run -m 128m`` 最终体现为对 cgroup ``memory.max`` 的写入。
+
+overlayfs 与存储驱动
+==========================
+
+容器可写层通常挂载在 overlayfs 之上：
+
+.. code-block:: text
+
+   merged（容器视图）
+     = upper（可写层，容器删除时丢弃）
+     + lower（镜像只读层，可多层叠加）
+
+``docker info`` 可查看 ``Storage Driver``。``overlay2`` 是主流选择；根文件系统只读（``--read-only``）时 upper 仅记录临时变更，增强安全性。
+
 Kubernetes 简述
 ========================
 

@@ -41,32 +41,163 @@
 - `0xAX/linux-insides <https://github.com/0xAX/linux-insides>`_ —— 内核启动等（英文）
 - `Linux 源码浏览器 <https://elixir.bootlin.com/linux/latest/source>`_
 
-本教程章节与源码路径对照
-========================
+按章节的内核源码阅读路线
+==========================
+
+每章建议 3–5 个关键文件，按序阅读可建立「用户态现象 → 内核实现」的映射。
+
+第 1–2 章：概述与启动
+------------------------
 
 .. list-table::
    :header-rows: 1
-   :widths: 20 50
+   :widths: 28 52
 
-   * - 主题
-     - 内核路径示例
-   * - 调度
-     - ``kernel/sched/fair.c``
-   * - 内存
-     - ``mm/page_alloc.c``、``mm/memory.c``
-   * - VFS
-     - ``fs/read_write.c``、``fs/open.c``
-   * - 网络
-     - ``net/socket.c``、``net/ipv4/tcp.c``
-   * - 系统调用
-     - ``arch/x86/entry/entry_64.S``
+   * - 文件
+     - 内容
+   * - ``init/main.c``
+     - ``start_kernel()`` 入口
+   * - ``arch/x86/kernel/head64.c``
+     - x86-64 早期启动
+   * - ``init/do_mounts.c``
+     - 根文件系统挂载
+   * - ``kernel/sys.c``
+     - ``sysinfo``、``uname`` 等实现
+
+第 3 章：进程与线程
+------------------------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 28 52
+
+   * - 文件
+     - 内容
+   * - ``kernel/fork.c``
+     - ``copy_process()``、``fork`` 核心
+   * - ``kernel/sched/core.c``
+     - 调度器主逻辑
+   * - ``kernel/sched/fair.c``
+     - CFS 公平调度
+   * - ``kernel/exit.c``
+     - 进程退出与僵尸回收
+
+第 4 章：内存管理
+------------------------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 28 52
+
+   * - 文件
+     - 内容
+   * - ``mm/page_alloc.c``
+     - 伙伴系统页分配
+   * - ``mm/memory.c``
+     - 缺页异常、页表操作
+   * - ``mm/mmap.c``
+     - ``mmap`` 系统调用
+   * - ``mm/swap.c``
+     - swap 换入换出
+
+第 5 章：文件系统
+------------------------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 28 52
+
+   * - 文件
+     - 内容
+   * - ``fs/open.c``、``fs/read_write.c``
+     - VFS 打开与读写
+   * - ``fs/namei.c``
+     - 路径解析
+   * - ``fs/ext4/``
+     - ext4 具体实现
+   * - ``mm/filemap.c``
+     - page cache
+
+第 6 章：设备驱动
+------------------------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 28 52
+
+   * - 文件
+     - 内容
+   * - ``drivers/base/core.c``
+     - 设备模型
+   * - ``drivers/base/dd.c``
+     - probe 绑定
+   * - ``drivers/char/mem.c``
+     - 简单字符设备参考
+   * - ``block/blk-core.c``
+     - 块设备层
+
+第 7 章：网络
+------------------------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 28 52
+
+   * - 文件
+     - 内容
+   * - ``net/socket.c``
+     - socket 系统调用
+   * - ``net/core/dev.c``
+     - 收发包入口
+   * - ``net/ipv4/tcp_ipv4.c``
+     - TCP over IPv4
+   * - ``net/netfilter/``
+     - 防火墙钩子
+
+第 8 章：系统调用
+------------------------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 28 52
+
+   * - 文件
+     - 内容
+   * - ``arch/x86/entry/entry_64.S``
+     - syscall 入口汇编
+   * - ``arch/x86/entry/syscall_64.c``
+     - 系统调用分发
+   * - ``arch/x86/entry/syscalls/syscall_64.tbl``
+     - 系统调用号表
+   * - ``kernel/seccomp.c``
+     - seccomp 过滤
+
+第 9–10 章：安全与虚拟化
+---------------------------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 28 52
+
+   * - 文件
+     - 内容
+   * - ``security/selinux/``
+     - SELinux 实现
+   * - ``security/apparmor/``
+     - AppArmor 实现
+   * - ``kernel/nsproxy.c``
+     - namespace 管理
+   * - ``kernel/cgroup/``
+     - cgroup v2
+   * - ``virt/kvm/kvm_main.c``
+     - KVM 核心
 
 实践建议
 ========================
 
-1. 结合 ``strace`` 阅读 APUE 示例
-2. 用 ``perf``/``bpftrace`` 观察本教程各章实验程序
-3. 在 QEMU 虚拟机中编译、安装自定义内核
-4. 阅读与你工作最相关的子系统源码（如仅网络或仅存储）
+1. 结合 ``strace`` 阅读 APUE 示例，对照 ``kernel/`` 中对应 ``SYSCALL_DEFINE``
+2. 用 ``perf``/``bpftrace`` 观察本教程 ``source/code/`` 各章实验程序
+3. 在 QEMU 虚拟机中编译、安装自定义内核（见 :doc:`a2_build_kernel`）
+4. 从与你工作最相关的子系统选一条上表路线，每次只读一个文件的一个函数
 
 操作系统与 Linux 内核博大精深，本教程是起点而非终点。祝学习顺利。

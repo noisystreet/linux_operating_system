@@ -77,3 +77,41 @@ ext4、XFS、Btrfs 等支持 POSIX ACL，挂载时可能需要 ``acl`` 选项：
    # /etc/fstab 中可加 acl 选项
 
 ACL 仍属 DAC——用户若有文件写权限，可修改 ACL 授予他人访问。要防止所有者随意授权，需:strong:`强制访问控制` （LSM）。下一节介绍 LSM 框架及 SELinux、AppArmor。
+
+内核中的 ACL 实现
+==========================
+
+VFS 层在常规 ``inode_permission()`` 检查之后，调用文件系统特定的 ACL 钩子。ext4 将 POSIX ACL 存储在:strong:`扩展属性` （xattr）中：
+
+.. code-block:: bash
+
+   getfattr -d -m - file_with_acl.txt
+   # 可见 security.system.posix_acl_access
+
+相关内核路径：
+
+- ``fs/posix_acl.c`` —— POSIX ACL 通用逻辑
+- ``fs/ext4/xattr.c`` —— ext4 扩展属性存储
+- ``fs/namei.c`` —— 路径查找与权限检查入口
+
+用户态 ``setfacl``/``getfacl`` 通过 ``setxattr``/``getxattr`` 系统调用操作上述属性。``ls -l`` 显示的 ``+`` 即提示存在扩展 ACL。
+
+C 程序设置 ACL（了解即可）
+==========================
+
+.. code-block:: c
+
+   #include <acl/libacl.h>
+   acl_t acl = acl_get_file("shared.txt", ACL_TYPE_ACCESS);
+   acl_entry_t entry;
+   acl_create_entry(&acl, &entry);
+   acl_set_tag_type(entry, ACL_USER);
+   uid_t bob = 1001;
+   acl_set_qualifier(entry, &bob);
+   acl_permset_t perm;
+   acl_get_permset(entry, &perm);
+   acl_add_perm(perm, ACL_READ);
+   acl_set_file("shared.txt", ACL_TYPE_ACCESS, acl);
+   acl_free(acl);
+
+生产环境优先使用 ``setfacl`` 命令或配置管理工具；直接调用 libacl 适合需要动态授权的应用。

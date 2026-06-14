@@ -164,6 +164,8 @@ chap09 — 第 9 章：安全
      - ``prctl(PR_SET_KEEPCAPS)`` 与 capability
    * - ``secure_file``
      - 创建权限为 0600 的私有文件
+   * - ``seccomp_demo``
+     - 安装 seccomp-BPF 过滤器（运行后调用受限 syscall 会被终止，勿纳入 ``make test``）
 
 chap10 — 第 10 章：虚拟化与容器
 ----------------------------------
@@ -182,6 +184,8 @@ chap10 — 第 10 章：虚拟化与容器
      - 检测 ``/dev/kvm`` 与 CPU 虚拟化支持
    * - ``limit_cpu.sh``
      - cgroup v2 CPU 限制演示（需 root）
+   * - ``setup_veth_netns.sh``
+     - 创建 veth 对并配置独立网络命名空间（需 root）
 
 单程序编译
 ==========

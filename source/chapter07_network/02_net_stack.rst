@@ -73,7 +73,23 @@ TCP 还涉及拥塞控制、滑动窗口、重传等复杂逻辑（``net/ipv4/tc
    → 数据放入 socket 接收队列
    → 唤醒阻塞的 read()/recv()，或就绪 epoll
 
-:strong:`NAPI` （New API）：高负载时驱动一次中断处理多个包，减少中断次数。
+:strong:`NAPI` （New API）：高负载时驱动一次中断处理多个包，减少中断次数。收包入口函数 ``netif_receive_skb()`` 位于 ``net/core/dev.c``；TCP 层入口 ``tcp_v4_rcv()`` 在 ``net/ipv4/tcp_ipv4.c``。
+
+软中断与 NAPI 调度
+==========================
+
+网卡收到数据后，驱动通常:
+
+1. 分配 ``sk_buff``，DMA 填入帧数据
+2. 触发硬件中断（硬中断上下文，尽量短）
+3. 调度:strong:`软中断` ``NET_RX_SOFTIRQ``，在软中断中批量调用 ``netif_receive_skb()``
+
+.. code-block:: bash
+
+   cat /proc/softirqs | grep NET_RX
+   watch -n1 'cat /proc/net/softnet_stat'
+
+高 PPS 场景下，NAPI 的 ``budget`` 限制单次软中断处理的包数，避免长时间占用 CPU 导致饥饿。
 
 网络命名空间
 ========================
