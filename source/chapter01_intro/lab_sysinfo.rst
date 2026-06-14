@@ -23,7 +23,7 @@
 探索 /proc 文件系统
 ====================
 
-/proc 是一个**虚拟文件系统**，内核运行时通过它暴露系统状态。目录下的每个数字文件夹对应一个运行的进程。
+/proc 是一个:strong:`虚拟文件系统`，内核运行时通过它暴露系统状态。目录下的每个数字文件夹对应一个运行的进程。
 
 .. code-block:: bash
 
@@ -52,15 +52,15 @@
    # 对 output 的解释
    vmstat 1 5   # 每 1 秒采样一次，共 5 次
 
-`vmstat` 的输出列含义：
+``vmstat`` 的输出列含义：
 
-- `procs > r`：等待 CPU 的进程数（不包含正在运行的）
-- `memory > free`：空闲内存（KB）
-- `swap > si / so`：换入/换出磁盘的数据量（非零说明内存紧张）
-- `system > in / cs`：中断数（interrupts）和上下文切换数（context switches）
-- `cpu > us / sy / id / wa`：用户态 CPU / 内核态 CPU / 空闲 / 等待 I/O 的占比
+- ``procs > r`` ：等待 CPU 的进程数（不包含正在运行的）
+- ``memory > free`` ：空闲内存（KB）
+- ``swap > si / so`` ：换入/换出磁盘的数据量（非零说明内存紧张）
+- ``system > in / cs`` ：中断数（interrupts）和上下文切换数（context switches）
+- ``cpu > us / sy / id / wa`` ：用户态 CPU / 内核态 CPU / 空闲 / 等待 I/O 的占比
 
-在另一个终端运行一些操作（比如 `ls -R /` 遍历文件系统），观察 `cs`（context switch）和 `wa`（I/O wait）的变化。
+在另一个终端运行一些操作（比如 `ls -R /` 遍历文件系统），观察 `cs` （context switch）和 `wa` （I/O wait）的变化。
 
 用 C++ 程序获取系统信息
 ==========================
