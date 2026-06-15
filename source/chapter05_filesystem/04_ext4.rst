@@ -92,6 +92,48 @@ ext4 支持三种日志模式（挂载选项 ``data=``）：
 
 :strong:`多块分配器` （mballoc）尝试为相关文件分配相邻块，提升顺序读写性能。
 
+用 dumpe2fs 观察 on-disk 结构
+========================
+
+``dumpe2fs`` 读取超级块和块组描述符，是理解 ext4 布局的首选工具（对未挂载设备操作，避免破坏数据）：
+
+.. code-block:: bash
+
+   sudo dumpe2fs -h /dev/sda2
+   # 关注：Block size, Block count, Inode count, Journal inode
+
+输出中的 ``Filesystem features`` 列出已启用特性，如 ``has_journal``、``extent``、``64bit``。``First block`` 和 ``Block group`` 段展示各块组的空闲块/inode 数量。
+
+extent 树示意
+========================
+
+ext4 大文件用 extent 树替代间接块链。每个 extent 记录 ``{逻辑块起始, 物理块起始, 长度}`` ，一段连续 1 MB 数据只需一个 extent 项，而 ext2 间接块方案可能需要数百个指针。
+
+.. code-block:: text
+
+   inode
+     └── extent 头
+           ├── extent[0]: logical 0, physical 1000, len 256 blocks
+           ├── extent[1]: logical 256, physical 5000, len 128 blocks
+           └── ...
+
+``debugfs`` 可查看具体文件的 extent 映射：
+
+.. code-block:: bash
+
+   sudo debugfs -R "dump_extents /etc/hostname" /dev/sda2
+
+崩溃恢复与 fsck
+========================
+
+异常断电后，内核挂载时检查日志是否需要重放。若超级块或日志严重损坏，需离线修复：
+
+.. code-block:: bash
+
+   sudo fsck.ext4 -f /dev/sda2
+
+``-f`` 强制检查即使文件系统标记为 clean。生产环境应先备份或确认维护窗口——fsck 对大分区可能耗时数小时。``tune2fs -l`` 可查看上次检查时间和挂载计数。
+
 XFS、Btrfs、tmpfs 等文件系统的特性与适用场景见下一节 ``05_other_fs``。
 
 文件内容读写如何经过内核到达磁盘？涉及 page cache 和 I/O 路径，``06_io_uring`` 节与第 6 章块设备层衔接讨论。
