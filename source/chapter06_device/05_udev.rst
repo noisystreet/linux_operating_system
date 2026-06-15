@@ -88,4 +88,31 @@ udev 创建便于管理的符号链接：
 
 systemd 与 udev 紧密集成：``systemd-udevd`` 即 udev 守护进程。设备就绪可触发 ``systemd`` 单元（``SYSTEMD_WANTS``），实现设备依赖的服务启动（如加密分区解锁后挂载）。
 
+持久化命名与调试规则
+========================
+
+块设备名 ``/dev/sda`` 可能因插拔顺序变化。udev 在 ``/dev/disk/by-uuid/``、``by-partuuid/`` 下创建稳定符号链接，``/etc/fstab`` 应优先使用 UUID。
+
+为自定义设备创建持久符号链接示例：
+
+.. code-block:: text
+
+   # /etc/udev/rules.d/99-myusb.rules
+   SUBSYSTEM=="block", ATTR{serial}=="ABC123", SYMLINK+="disk/mybackup"
+
+``udevadm test`` 可在不实际触发事件的情况下验证规则是否匹配：
+
+.. code-block:: bash
+
+   sudo udevadm test /sys/block/sda
+   # 输出中将显示将应用的规则与 PROGRAM/RUN 结果
+
+若规则未生效，检查：文件名优先级（``99-`` 覆盖 ``60-``）、拼写、是否 ``udevadm control --reload-rules``、属性是否随内核版本变化（用 ``udevadm info -a`` 核对）。
+
+与 systemd 单元联动时，可在规则中添加 ``TAG+="systemd"``，配合 ``.device`` 单元实现"磁盘就绪后再挂载"：
+
+.. code-block:: text
+
+   SUBSYSTEM=="block", ENV{ID_FS_UUID}=="xxxx", TAG+="systemd"
+
 设备子系统从内核驱动到用户空间节点，构成完整的 I/O 栈。下一节通过命令和简单的字符设备驱动实验，把理论落到实处。

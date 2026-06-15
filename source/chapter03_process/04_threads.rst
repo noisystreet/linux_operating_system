@@ -131,6 +131,37 @@ POSIX 线程 API
 
 多线程共享内存，对同一变量的并发访问可能导致:strong:`数据竞争` （data race）。例如两个线程同时执行 ``counter++``，可能丢失更新。需要同步机制保护共享数据——下一节的 IPC 与再下一节的同步原语将详细讨论。
 
+经典竞态示例（错误写法）：
+
+.. code-block:: cpp
+
+   #include <pthread.h>
+   long counter = 0;
+
+   void* worker(void*) {
+       for (int i = 0; i < 100000; ++i)
+           ++counter;   // 非原子：读-改-写三步可能交错
+       return nullptr;
+   }
+   // 两个 worker 结束后 counter 往往远小于 200000
+
+用互斥锁修复：
+
+.. code-block:: cpp
+
+   pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+
+   void* worker_safe(void*) {
+       for (int i = 0; i < 100000; ++i) {
+           pthread_mutex_lock(&lock);
+           ++counter;
+           pthread_mutex_unlock(&lock);
+       }
+       return nullptr;
+   }
+
+``thread_demo`` （``source/code/chap03/``）演示线程创建；可将上述计数器实验加入其中，用 ``./thread_demo`` 对比加锁前后结果。C++11 的 ``std::atomic<long>`` 则提供无锁原子递增，适合简单计数场景。
+
 .. note::
 
    C++11 起提供 ``std::thread``、``std::mutex`` 等标准库支持，底层通常仍基于 pthread。本教程以 POSIX API 为主，因其与 Linux 内核关系更直接。

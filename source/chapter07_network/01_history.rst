@@ -60,4 +60,15 @@ Linux 1.x 的网络栈简陋，仅支持基本 TCP/IP。2.2 版本引入:strong:
 
 容器和 Kubernetes 使:strong:`虚拟网络` （veth、bridge、overlay）成为标配，网络命名空间（第 10 章）与 Netfilter 规则紧密配合。
 
+数据包在 Linux 主机上的典型路径（简化）：
+
+.. code-block:: text
+
+   网卡 RX 中断 → NAPI 轮询 → 构造 sk_buff
+   → 链路层（以太网解帧）→ 网络层（IP 路由）
+   → 传输层（TCP/UDP）→ socket 接收队列
+   → 应用 read()/recv()
+
+发送方向对称。容器场景中，veth 一端在容器 netns、一端在宿主机 bridge，包在进出容器时经历 namespace 切换与可能的 iptables/nftables 规则匹配——这也是 ``lab_namespaces`` 与 ``lab_netfilter`` 实验的物理基础。
+
 从协议分层到 socket 抽象，Linux 构建了完整的网络子系统。下一节剖析内核网络栈的分层架构和数据包流向。

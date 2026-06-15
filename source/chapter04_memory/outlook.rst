@@ -22,6 +22,13 @@
 
 ``malloc_demo``、``mmap_cow`` 帮助理解堆、映射与 COW；页表遍历见 ``02_addressing`` Mermaid 图。OOM 与 cgroup 杀进程见第 10 章 cgroup 实验。
 
+动手延伸
+========================
+
+#. 在 ``lab_mem_tools`` 环境中运行 ``vmstat 1``，人为制造内存压力（如 ``stress-ng --vm 2``），观察 ``si``/``so`` 与 ``05_swap`` 中 zswap 参数。
+#. 对比 ``/proc/self/maps`` 与 ``pmap -x $$`` 输出，标出堆、栈、映射库各段。
+#. 若系统启用 THP，检查 ``/sys/kernel/mm/transparent_hugepage/enabled`` 并阅读 ``04_linux_mm`` 中大页小节。
+
 进一步了解
 ==========================
 

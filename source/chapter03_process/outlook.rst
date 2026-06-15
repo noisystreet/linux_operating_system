@@ -22,6 +22,13 @@ CFS 公平调度器处理绝大多数通用负载；``NPTL`` 线程库基于 ``c
 
 ``lab_process_program`` 与 ``source/code/chap03/`` 覆盖 fork、管道、互斥锁；进阶可结合 ``perf record -g ./thread_demo`` 观察锁竞争（附录场景三）。
 
+动手延伸
+========================
+
+#. 对 ``thread_demo`` 运行 ``perf stat -e context-switches,cpu-migrations ./thread_demo``，记录线程数与切换次数关系。
+#. 用 ``bpftrace -e 'tracepoint:sched:sched_switch /pid == PID/ { @[comm] = count(); }'`` 统计某进程调度切换（需 root，见第 7 章）。
+#. 阅读内核 ``kernel/sched/fair.c`` 中 CFS 相关注释，对照 ``03_scheduling`` 中的虚拟运行时间概念。
+
 进一步了解
 ==========================
 

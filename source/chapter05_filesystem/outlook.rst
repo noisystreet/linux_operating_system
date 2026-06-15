@@ -22,6 +22,13 @@ ext4 与 XFS 占根分区与数据盘主流；容器镜像层多用 overlayfs。
 
 理解 ``open/read/write`` 与 page cache 后，阅读 io_uring 文档可对比「同步 syscall」与「提交环」语义差异。附录源码路线列出 ``fs/ext4/``、``fs/xfs/``、``fs/btrfs/``。
 
+动手延伸
+========================
+
+#. 用 ``06_io_uring`` 中的 liburing 示例编译运行，与 ``strace -c cat /etc/hostname`` 对比 syscall 次数。
+#. ``dumpe2fs -h`` 查看根分区特性位，对照 ``04_ext4`` extent 与 journal 说明。
+#. 在 ``lab_fs_program`` 中尝试 ``O_DIRECT`` 与缓冲 I/O 读取同一文件，比较 ``iostat`` 中 ``r/s`` 差异。
+
 进一步了解
 ==========================
 

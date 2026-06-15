@@ -65,4 +65,15 @@ Linux 2.6 引入:strong:`统一设备模型` （Unified Driver Model）：用 bu
 
 NVMe SSD 取代机械硬盘成为主流，I/O 调度从"减少寻道"转向"降低延迟、提高并行度"。
 
+以一块 NVMe 盘为例，从应用到硅片的完整路径可概括为：
+
+.. code-block:: text
+
+   read() / write()
+   → VFS → 文件系统（ext4 等）→ page cache
+   → 块层（blk-mq 多队列）
+   → NVMe 驱动 → PCIe → SSD 控制器
+
+理解这条链路有助于将第 5 章文件 I/O 与第 6 章块设备、中断、DMA 联系起来。``iostat -x`` 中的 ``%util``、``await`` 反映的是块层及以下瓶颈，而非 VFS 本身。
+
 从轮询到中断，从静态 ``/dev`` 到 udev 动态管理，设备子系统日趋成熟。下一节介绍 Linux 统一设备驱动模型的核心概念。
