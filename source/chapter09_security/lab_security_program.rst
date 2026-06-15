@@ -123,3 +123,5 @@ setuid 通常会清空 capability。``PR_SET_KEEPCAPS`` 可在 setuid 后保留 
 
 - ``man 7 credentials``、``man 7 capabilities``、``man 5 acl``
 - SELinux 文档：Red Hat SELinux User's and Administrator's Guide
+
+本章完整参考资料与各节交叉索引见 :doc:`references`。

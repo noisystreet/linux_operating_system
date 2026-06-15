@@ -144,3 +144,5 @@ O_DIRECT 说明
 - ``man 2 open``、``man 2 read``、``man 2 write``、``man 2 fsync``
 - 内核文档 ``Documentation/filesystems/vfs.rst``
 - ``liburing`` 官方文档（io_uring）
+
+本章完整参考资料与各节交叉索引见 :doc:`references`。

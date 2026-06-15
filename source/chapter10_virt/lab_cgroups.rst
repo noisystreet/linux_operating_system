@@ -150,4 +150,4 @@ QEMU 最小虚拟机
    sudo ip netns del ns1 2>/dev/null
    sudo rm -rf /sys/fs/cgroup/demo_mem /sys/fs/cgroup/mini_ctr 2>/dev/null
 
-恭喜完成第 10 章实践。附录汇总调试工具、内核编译和参考资料，供深入学习。
+恭喜完成第 10 章实践。附录汇总调试工具、内核编译和参考资料；本章完整索引见 :doc:`references`，全书趋势见 :doc:`/appendix/a4_outlook_index`。

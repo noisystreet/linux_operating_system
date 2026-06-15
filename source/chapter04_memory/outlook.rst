@@ -28,6 +28,7 @@
 - 内核 ``Documentation/admin-guide/mm/``、``Documentation/mm/damon/``
 - 第 3 章进程地址空间、第 5 章 page cache 与内存压力联动
 - LWN：MGLRU、memtiering 专题
+- 本章 :doc:`references` —— 内存管理手册页、实验代码与相关章节
 
 .. note::
 

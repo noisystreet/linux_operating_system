@@ -141,3 +141,5 @@ UDP 变体（可选）
 - ``man 2 socket``、``man 7 tcp``
 - 《UNIX 网络编程》卷 1（Stevens）
 - 内核源码 ``net/socket.c``、``net/ipv4/tcp.c``
+
+本章完整参考资料与各节交叉索引见 :doc:`references`。

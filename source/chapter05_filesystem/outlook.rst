@@ -28,6 +28,7 @@ ext4 与 XFS 占根分区与数据盘主流；容器镜像层多用 overlayfs。
 - 内核 ``Documentation/filesystems/``、``Documentation/io_uring/``
 - 第 6 章块层 I/O 调度与 ``iostat`` 对照磁盘延迟
 - LWN：io_uring 系列文章
+- 本章 :doc:`references` —— 文件 I/O、各文件系统命令与 VFS 源码索引
 
 .. note::
 

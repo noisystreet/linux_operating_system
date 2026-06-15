@@ -246,3 +246,5 @@ Platform 设备与设备树（简介）
    };
 
 PC 上常见的 PCI/USB 设备则通过总线层自动匹配，原理类似：内核根据设备 ID 绑定对应 ``driver``。本教程的 ``hello_chardev`` 采用手动注册设备号的最小方式，便于理解 ``file_operations`` 核心流程。
+
+本章完整参考资料与各节交叉索引见 :doc:`references`。

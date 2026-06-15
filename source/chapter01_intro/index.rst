@@ -14,3 +14,4 @@
    04_linux_intro
    lab_sysinfo
    outlook
+   references

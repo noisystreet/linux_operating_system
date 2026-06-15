@@ -28,6 +28,7 @@ x86 服务器与 PC 仍以 UEFI + GRUB/systemd-boot + systemd 为主流；嵌入
 - systemd 文档：``systemd-boot``、UKI
 - 内核 ``Documentation/admin-guide/acpi/``、``Documentation/efi-stub.txt``
 - 第 10 章容器启动可视为「用户态构造的另类 init 环境」
+- 本章 :doc:`references` —— 启动相关手册页、内核路径与交叉索引
 
 .. note::
 
