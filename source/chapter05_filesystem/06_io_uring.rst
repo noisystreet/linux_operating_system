@@ -89,6 +89,50 @@ io_uring 包含两个环形队列：
 
 库 ``liburing`` 封装了上述接口。数据库（如 PostgreSQL）、Web 服务器等已开始集成 io_uring。
 
+liburing 最小示例
+========================
+
+以下 C 程序演示用 io_uring 异步读取文件（需安装 ``liburing-dev``，内核 5.1+）：
+
+.. code-block:: cpp
+
+   #include <liburing.h>
+   #include <fcntl.h>
+   #include <unistd.h>
+   #include <stdio.h>
+
+   int main() {
+       struct io_uring ring;
+       io_uring_queue_init(32, &ring, 0);
+
+       int fd = open("/etc/hostname", O_RDONLY);
+       char buf[256] = {};
+
+       struct io_uring_sqe *sqe = io_uring_get_sqe(&ring);
+       io_uring_prep_read(sqe, fd, buf, sizeof(buf) - 1, 0);
+       io_uring_sqe_set_data(sqe, buf);
+
+       io_uring_submit(&ring);
+
+       struct io_uring_cqe *cqe;
+       io_uring_wait_cqe(&ring, &cqe);
+       if (cqe->res >= 0) {
+           buf[cqe->res] = '\0';
+           printf("read: %s\n", buf);
+       }
+       io_uring_cqe_seen(&ring, cqe);
+       io_uring_queue_exit(&ring);
+       close(fd);
+       return 0;
+   }
+
+编译：``g++ -o uring_read uring_read.cpp -luring``。与同步 ``read()`` 相比，优势在高并发场景下批量提交、批量收割，减少 ``read`` 系统调用次数和上下文切换。
+
+轮询模式（高级）
+========================
+
+``io_uring_queue_init()`` 的 flags 可设 ``IORING_SETUP_IOPOLL`` （块设备轮询）或 ``IORING_SETUP_SQPOLL`` （内核线程轮询提交队列）。轮询牺牲 CPU 占用换取更低延迟，适合 NVMe 上极高 IOPS 的专用服务。桌面和通用服务器默认中断驱动模式即可。
+
 I/O 调度器与块层
 ========================
 

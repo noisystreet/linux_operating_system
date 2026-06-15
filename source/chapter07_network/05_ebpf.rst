@@ -67,6 +67,31 @@ bpftrace 一行实验
 
 按 ``Ctrl-C`` 结束并打印聚合结果。bpftrace 脚本在启动时由 LLVM 编译为 eBPF 字节码，经 ``bpf()`` 加载。
 
+最小 libbpf 程序（概念）
+========================
+
+生产级 eBPF 常用 C 编写、libbpf 加载。以下骨架展示 tracepoint 挂载（需 BTF/CO-RE 支持，内核 5.8+ 常见）：
+
+.. code-block:: c
+
+   // bpf_prog.c — 编译为 BPF 对象后由用户态 loader 加载
+   #include <vmlinux.h>
+   #include <bpf/bpf_helpers.h>
+
+   SEC("tracepoint/syscalls/sys_enter_write")
+   int handle_write(void *ctx)
+   {
+       bpf_printk("write syscall entered\n");
+       return 0;
+   }
+
+用户态用 ``bpftool`` 或自写 loader 调用 ``bpf()`` 加载，``bpftool prog tracelog`` 查看 ``bpf_printk`` 输出。完整工程需 ``clang -target bpf`` 编译、``bpftool gen skeleton`` 生成加载代码——细节见内核文档 ``Documentation/bpf/``。
+
+CO-RE 与 BTF
+========================
+
+传统 eBPF 程序依赖内核数据结构偏移，换内核版本常需重编译。:strong:`CO-RE` （Compile Once, Run Everywhere）借助:strong:`BTF` （BPF Type Format）在加载时重定位字段偏移。发行版内核若启用 ``CONFIG_DEBUG_INFO_BTF=y`` ，可用 ``bpftool btf dump file /sys/kernel/btf/vmlinux`` 查看类型信息。
+
 验证器常见拒绝原因
 ==========================
 

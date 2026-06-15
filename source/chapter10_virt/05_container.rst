@@ -148,6 +148,30 @@ Kubernetes 简述
 
 Kubernetes 在节点上通过 kubelet 调用 CRI（containerd/CRI-O）管理 Pod。每个 Pod 通常共享 Network namespace（内容器 localhost 互通），可有独立 PID namespace（取决于配置）。资源 limits 映射 cgroup。
 
+Pod 是 Kubernetes 的最小调度单元，而非单个容器。一个 Pod 内可运行多个容器（如应用 + sidecar 日志采集），它们共享：
+
+- :strong:`Network namespace` ：同一 IP、同一端口空间，通过 ``localhost`` 通信
+- :strong:`IPC namespace` ：可选共享信号量、共享内存
+- :strong:`cgroup` ：kubelet 为 Pod 创建 cgroup，其下所有容器进程计入同一资源配额
+
+.. code-block:: text
+
+   Node
+   └── kubelet
+       └── Pod（cgroup + net ns）
+           ├── 容器 A（pause / 应用）
+           └── 容器 B（sidecar）
+
+CRI（Container Runtime Interface）抽象了容器运行时。kubelet 通过 gRPC 调用 containerd 的 CRI 插件，由 runc 实际创建 namespace 和 cgroup。CNI（Container Network Interface）插件负责为 Pod 分配 IP、配置路由和策略——Calico、Cilium 等实现各不相同，但 Pod 内看到的仍是标准 Linux 网络栈。
+
+资源模型方面，K8s 的 ``requests`` 影响调度（保证节点有足够资源），``limits`` 写入 cgroup 硬上限。``Burstable`` QoS 类 Pod 在内存紧张时比 ``Guaranteed`` 更容易被驱逐——这与 cgroup ``memory.max`` 和 kubelet 驱逐策略联动。
+
+.. code-block:: bash
+
+   # 查看 Pod 对应 cgroup（路径因集群配置而异）
+   kubectl exec -it mypod -- cat /proc/self/cgroup
+   # 宿主机上对照 /sys/fs/cgroup/... 下的 memory.current
+
 安全考量
 ========================
 

@@ -26,6 +26,23 @@ strace 验证：
 
 输出类似：``write(1, "hello\n", 6) = 6``。fd 1 为 stdout。
 
+常见错误返回值：
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 42
+
+   * - 返回值
+     - 含义
+   * - ``-EBADF``
+     - fd 无效或已关闭
+   * - ``-EFAULT``
+     - ``buf`` 指向不可访问的用户地址
+   * - ``-EPIPE``
+     - 写入已关闭读端的管道（默认触发 SIGPIPE）
+   * - ``-ENOSPC``
+     - 磁盘或配额已满
+
 内核入口：sys_write
 ========================
 
@@ -40,6 +57,47 @@ strace 验证：
    → 具体文件系统或 tty、pipe、socket 实现
 
 若 fd 指向普通文件，最终数据进入 page cache；若指向终端，由 tty 驱动输出；若指向 socket，进入网络栈。
+
+不同后端的路径分叉
+========================
+
+``struct file`` 的 ``f_op`` 决定最终处理函数。下表概括常见 fd 类型：
+
+.. list-table::
+   :header-rows: 1
+   :widths: 22 48
+
+   * - fd 类型
+     - write 路径
+   * - 普通文件（ext4 等）
+     - ``generic_file_write_iter`` → page cache dirty 页
+   * - 终端 ``/dev/tty``
+     - ``tty_write`` → 控制台驱动
+   * - 管道 pipe
+     - ``pipe_write`` → 环形缓冲区
+   * - socket
+     - ``sock_write_iter`` → 协议栈发送队列
+
+可用 ``ls -l /proc/self/fd/`` 查看 fd 指向，``readlink`` 显示目标路径或 ``socket:[inode]`` 等形式。
+
+内核源码导读（节选）
+========================
+
+``fs/read_write.c`` 中 ``vfs_write`` 的核心逻辑（简化）：
+
+.. code-block:: c
+
+   ssize_t vfs_write(struct file *file, const char __user *buf,
+                     size_t count, loff_t *pos)
+   {
+       if (!(file->f_mode & FMODE_WRITE))
+           return -EBADF;
+       if (!file->f_op->write_iter)
+           return -EINVAL;
+       return file->f_op->write_iter(&kiocb, &iov_iter);
+   }
+
+对常规文件，``ext4_file_write_iter`` 最终调用 ``generic_perform_write`` ，将用户数据通过 ``copy_from_user`` 拷入 page cache。这与第 5 章 ``06_io_uring`` 讨论的缓冲 I/O 路径一致。
 
 VFS 层
 ========================
@@ -91,5 +149,18 @@ copy_from_user
 3. 重新编译内核，用户态 ``syscall(__NR_hello)``
 
 生产环境极少这样做——新功能倾向通过 ``ioctl``、netlink 或 eBPF 扩展。内核模块无法动态注册 syscall。
+
+用 ftrace 观察 write 路径
+========================
+
+除 strace 外，可用内核追踪观察 ``vfs_write`` 或 ``ext4_file_write_iter`` 的调用频率：
+
+.. code-block:: bash
+
+   # 需 root；按内核符号是否可用调整函数名
+   sudo perf probe vfs_write
+   sudo perf stat -e probe:vfs_write -a sleep 1
+
+或用 ``bpftrace`` 一行统计各进程 write 次数（见第 7 章 eBPF 节）。将用户态 strace 与内核探针结合，可区分"库缓冲导致的 write"与"实际进入内核的次数"。
 
 实践环节将用 strace、perf 观察系统调用，并用内联汇编直接调用 ``getpid`` 和 ``write``。

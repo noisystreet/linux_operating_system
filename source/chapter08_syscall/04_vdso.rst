@@ -49,6 +49,32 @@ vDSO 提供的函数
 
 实现通常读取:strong:`vvar` 页（与 vDSO 配套的内核更新页）中的时间数据，由内核在时钟中断时更新，用户态只读无需 syscall。
 
+vvar 页布局（概念）
+========================
+
+vDSO 与 vvar 在进程地址空间中相邻映射。vvar 存放 ``clocksource`` 更新的时间戳、时区信息、CPU 编号等只读数据；vDSO 代码读取 vvar 并计算 ``timespec`` 返回给调用者。
+
+.. code-block:: text
+
+   用户地址空间
+   ┌─────────────┐
+   │ vDSO 代码   │  __vdso_clock_gettime()
+   ├─────────────┤
+   │ vvar 数据页 │  内核定时更新 timekeeper
+   └─────────────┘
+
+``clock_gettime(CLOCK_MONOTONIC)`` 在 vDSO 路径上通常只需一次内存读取和少量算术；而 syscall 路径需陷入内核、查 ``ktime_get`` 、再返回。
+
+简单性能对比
+========================
+
+.. code-block:: bash
+
+   # 观察是否产生 clock_gettime 系统调用
+   strace -c -e clock_gettime bash -c 'for i in $(seq 1 10000); do date +%s >/dev/null; done'
+
+动态链接的 ``date`` 通常走 vDSO，strace 中 ``clock_gettime`` 计数为 0。静态编译版本则每次可能触发 syscall，``strace -c`` 可见明显差异。
+
 查看 vDSO 符号
 ========================
 
