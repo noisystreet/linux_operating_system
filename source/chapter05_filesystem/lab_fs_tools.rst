@@ -108,4 +108,45 @@ tmpfs 适合临时数据，重启或卸载后内容消失。
 
 ``findmnt`` 以树形显示挂载关系，便于理解 bind mount 和子挂载。
 
+预期输出与排错
+==========================
+
+硬链接实验后 ``ls -li`` 应显示 ``orig.txt`` 与 ``hard.txt`` **inode 号相同**；``sym.txt`` inode 不同且 ``stat`` 显示类型为符号链接。若 ``ln`` 报 ``Invalid cross-device link``，说明目标在不同文件系统，硬链接无法跨 FS。
+
+loop 挂载常见问题：
+
+.. list-table::
+   :header-rows: 1
+   :widths: 22 48
+
+   * - 现象
+     - 处理
+   * - ``mount: wrong fs type``
+     - 忘记 ``mkfs.ext4`` 或镜像损坏
+   * - ``losetup: cannot find`` 
+     - 用 ``losetup -a`` 确认设备名；``losetup -d /dev/loopN`` 释放
+   * - ``device is busy``
+     - 先 ``umount`` 再 ``losetup -d``
+
+``df -i``  inode 耗尽演示（慎用，仅测试机）：
+
+.. code-block:: bash
+
+   mkdir -p /tmp/inode_test && mount --bind /tmp/inode_test /mnt/testfs
+   # 在 /mnt/testfs 创建大量小文件直至 df -i 显示 100%
+
+VFS 路径对照练习
+==========================
+
+对 ``cat /etc/hostname`` 的 ``strace`` 输出标注各步对应 ``03_vfs.rst`` 调用链：
+
+.. code-block:: text
+
+   openat(...)     → 路径解析 + dentry/inode 查找 + file 创建
+   read(...)       → vfs_read → file_operations
+   write(1,...)    → 同一 file 写到 stdout
+   close(...)      → 释放 file 引用
+
+用 ``findmnt -o TARGET,SOURCE,FSTYPE,OPTIONS`` 列出根、``/proc``、``/home`` 的 FS 类型差异。
+
 下一节用 C++ 编写程序，实践 ``open/read/write`` 和 ``O_DIRECT`` 标志。

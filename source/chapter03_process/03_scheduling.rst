@@ -26,6 +26,18 @@ CPU 调度
 - 唤醒：等待的事件就绪，可能抢占当前进程
 - 进程退出
 
+.. mermaid::
+
+   stateDiagram-v2
+       [*] --> Runnable: 创建/唤醒
+       Runnable --> Running: schedule 选中
+       Running --> Runnable: 时间片用完/抢占
+       Running --> Blocked: 阻塞 I/O、wait
+       Blocked --> Runnable: 事件就绪
+       Running --> [*]: exit
+
+:strong:`图` ：进程调度状态（简化）
+
 :strong:`抢占` （preemption）指高优先级或可运行进程迫使当前进程让出 CPU。Linux 从 2.6 起对内核态也支持有限抢占（CONFIG_PREEMPT），桌面系统默认开启，保证高优先级任务能及时运行。
 
 调度策略
@@ -83,6 +95,13 @@ CFS 没有固定时间片，而是动态计算"目标延迟"（``sysctl_sched_la
 
 CFS 的实现位于 ``kernel/sched/fair.c``，关键函数包括 ``enqueue_entity()``、``dequeue_entity()``、``pick_next_entity()``。
 
+EEVDF：Linux 6.6+ 的演进
+========================
+
+:strong:`EEVDF` （Earliest Eligible Virtual Deadline First）自 Linux 6.6 起成为默认 CFS 调度类的核心算法，在保持公平性的同时改善:strong:`延迟敏感` 任务的响应。与纯 vruntime 最小化相比，EEVDF 引入「虚拟截止时间」概念，使长期得不到 CPU 的任务更快被选中。
+
+对应用开发者，仍主要通过 nice 值、cgroup ``cpu.max``、``SCHED_FIFO`` 影响调度；无需直接感知 EEVDF 细节，但阅读 ``kernel/sched/fair.c`` 时可能见到相关注释与符号。
+
 实时调度
 ========================
 
@@ -113,7 +132,10 @@ cgroup 与组调度
 
 .. code-block:: bash
 
-   # 查看进程的 cgroup
-   cat /proc/self/cgroup
+   # 将当前 shell 限制为 50% 单核 CPU（cgroup v2 + systemd）
+   systemd-run --scope -p CPUQuota=50% bash
+   # 在该 shell 内运行 stress-ng --cpu 4，观察仅约半核被占用
+
+``cat /proc/self/cgroup`` 可确认 scope 单元对应的 cgroup 路径，与第 10 章 ``04_cgroups`` 对照。
 
 调度是进程模型的核心。同一进程内的多个执行流——线程——如何共享资源、如何被调度，下一节讨论。

@@ -101,4 +101,58 @@ udev 热插拔监控
 
 ``Character devices`` 和 ``Block devices`` 分段列出已注册主设备号。编写驱动时需避免与现有号冲突，通常使用动态分配。
 
+解读命令输出
+==========================
+
+``lsmod`` 典型一行：
+
+.. code-block:: text
+
+   nvme           45056  0
+
+列含义：模块名、占用字节数、引用计数（0 表示可 ``modprobe -r``）、依赖模块列表。
+
+``iostat -x`` 关键列：
+
+.. list-table::
+   :header-rows: 1
+   :widths: 12 48
+
+   * - 列
+     - 含义
+   * - %util
+     - 设备忙碌时间占比；接近 100% 表示饱和
+   * - await
+     - 平均 I/O 等待时间（ms）；HDD 高、NVMe 通常低
+   * - r/s, w/s
+     - 每秒读写次数
+
+``/proc/interrupts`` 中，同一 IRQ 行末多列数字对应各 CPU 处理次数。若全部集中在 CPU0，可能存在中断亲和性未分散问题。
+
+热插拔端到端观察
+==========================
+
+在运行 ``udevadm monitor`` 的终端外，插入 U 盘，典型事件序列：
+
+.. code-block:: text
+
+   ACTION=add SUBSYSTEM=block DEVNAME=sdb
+   ACTION=add SUBSYSTEM=block DEVNAME=sdb1 ID_FS_UUID=...
+
+随后在另一终端：
+
+.. code-block:: bash
+
+   ls -l /dev/disk/by-uuid/
+   dmesg | tail -5
+
+将 ``DEVNAME``、``ID_FS_UUID`` 与 ``05_udev`` 规则编写、`/etc/fstab`` UUID 挂载联系起来。
+
+动手练习
+==========================
+
+#. 将某块设备的 I/O 调度器从 ``mq-deadline`` 改为 ``none``（NVMe 常见），对比 ``dd`` 时 ``iostat`` 的 ``await`` （仅测试环境）。
+#. 对 ``hello_chardev`` 加载前后各执行一次 ``cat /proc/devices``，确认新主设备号出现。
+#. 用 ``find /sys/devices -name 'modalias' | head`` 理解驱动匹配字符串来源。
+
 下一节编写一个简单的字符设备内核模块，实现最基本的 read/write 接口。
