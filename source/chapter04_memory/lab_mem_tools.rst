@@ -129,4 +129,34 @@ swappiness 实验
    grep -i huge /proc/meminfo
    cat /proc/slabinfo | head -15
 
+内存压力综合实验
+==========================
+
+在终端 A 持续观察：
+
+.. code-block:: bash
+
+   vmstat 1
+
+终端 B 逐步加压：
+
+.. code-block:: bash
+
+   stress-ng --vm 1 --vm-bytes 512M --timeout 60s
+
+观察要点：
+
+- ``free`` 下降、``buff/cache`` 可能被回收
+- ``si``/``so`` 非零表示开始换页；``so`` 持续偏高说明 swap 活跃
+- 极端情况下 ``dmesg`` 出现 ``Out of memory: Kill process`` 
+
+实验后恢复 ``swappiness`` 默认值（通常 60）。结合 ``05_swap`` 理解 zram/zswap 如何缓解磁盘换出。
+
+解读 zoneinfo 片段
+==========================
+
+``cat /proc/zoneinfo`` 中每个 zone 块含 ``nr_free_pages``、``low``、``min``、``high``。当空闲页低于 ``low``，``kswapd`` 内核线程在后台回收；低于 ``min`` 可能触发直接回收，应用分配变慢。``Node 0, zone   Normal`` 行下的数字即该 NUMA 节点、该内存域的水位状态。
+
+运行 ``lab_mem_program`` 中 ``malloc_demo`` 前后各保存一份 ``/proc/self/maps``，对比堆（``[heap]``）区域是否扩大。
+
 下一节通过 C++ 程序分配内存、观察 ``/proc/self/maps``，并体验段错误与 core dump 分析。

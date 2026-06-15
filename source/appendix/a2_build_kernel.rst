@@ -70,6 +70,31 @@
 
 启动失败时，在 GRUB 菜单选择旧内核进入系统。
 
+故障恢复与常见问题
+==========================
+
+.. list-table::
+   :header-rows: 1
+   :widths: 22 48
+
+   * - 现象
+     - 处理
+   * - 黑屏/无法引导
+     - GRUB 选旧内核；检查 ``/boot`` 是否满、initramfs 是否生成
+   * - ``Kernel panic: VFS unable to mount root``
+     - 检查 ``/etc/fstab``、initramfs 是否含根 FS 驱动；``update-initramfs -u``
+   * - 模块 ``version magic`` 不匹配
+     - 模块须针对**正在运行**的内核头文件编译；``uname -r`` 与 ``/lib/modules/`` 一致
+   * - Secure Boot 拒绝加载
+     - 自编译内核需签名或 MOK 注册；实验机可暂时关闭 Secure Boot
+
+发行版差异
+==========================
+
+- **Debian/Ubuntu**：``make install`` 调用 ``installkernel`` 脚本；initramfs 用 ``update-initramfs -u -k <version>``
+- **Fedora/RHEL**：常用 ``make install`` + ``dracut -f`` 重建 initramfs
+- 安装后确认 ``/boot/vmlinuz-*``、``/boot/initrd-*`` 成对存在，且 ``grub.cfg`` 或 ``bootctl`` 有条目
+
 仅编译模块
 ==========================
 

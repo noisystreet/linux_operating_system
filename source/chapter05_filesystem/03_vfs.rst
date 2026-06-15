@@ -39,12 +39,36 @@ VFS 用四种数据结构描述文件系统状态：
    inode:  doc.txt 的元数据
    file:   某进程的 open fd 对应的 file 结构
 
+对象关系总览
+========================
+
+.. mermaid::
+
+   flowchart TB
+       SB["super_block\n(文件系统实例)"]
+       IN["inode\n(文件元数据)"]
+       DE["dentry\n(路径缓存)"]
+       FI["struct file\n(打开实例)"]
+       FD["进程 fd 表"]
+       SB --> IN
+       DE --> IN
+       FI --> IN
+       FD --> FI
+
+:strong:`图` ：VFS 核心对象关系（简化）
+
+同一 inode 可有多个 dentry（硬链接）和多个 file（多次 open）。``mount`` 在目录 dentry 上嫁接新的 super_block，使子路径解析进入另一文件系统。
+
 路径解析与挂载
 ========================
 
-:strong:`路径解析` （path lookup）从根 dentry 或当前工作目录出发，逐级查找。dentry 缓存（dcache）命中则跳过磁盘读取；未命中则从父目录 inode 读取目录项，创建新 dentry。
+路径解析（path lookup）从根 dentry 或当前工作目录出发，逐级查找。dentry 缓存（dcache）命中则跳过磁盘读取；未命中则调用父目录 inode 的 ``lookup`` 从磁盘读取目录项，创建新 dentry 并加入 dcache。
+
+典型路径 ``/home/user/doc.txt`` 的解析：从根 dentry 开始 ``link_path_walk``，每级在父目录 inode 中查找子项；命中 dcache 时避免磁盘 I/O。这与 ``lab_fs_tools`` 中 ``strace openat`` 观察到的行为一致。
 
 :strong:`挂载` 时，挂载点目录的 dentry 被:strong:`遮盖` （covered），其下的 dentry 来自新挂载的 FS。``/home`` 挂载独立分区后，``/home/user`` 的解析进入该分区的根 inode。
+
+:strong:`挂载传播` （mount propagation）影响容器与 bind mount：``shared`` 使挂载事件在 peer 组间传播；``slave`` 只接收不传播；``private`` 互不影响。Docker 默认配置使容器挂载与宿主机隔离，排障 ``findmnt -o TARGET,PROPAGATION`` 时可看到 ``shared``/``slave`` 标志。
 
 .. code-block:: bash
 

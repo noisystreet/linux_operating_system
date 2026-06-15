@@ -107,4 +107,18 @@ seccomp 示例（可选）
 
 容器默认带有 seccomp 配置文件，限制危险系统调用。
 
+vDSO 与 seccomp 对比实验
+==========================
+
+.. code-block:: bash
+
+   # 动态链接：clock_gettime 通常不走 syscall
+   strace -e clock_gettime -c date
+   # 若计数为 0，说明 vDSO 生效（见 04_vdso.rst）
+
+   # 跨章：运行 seccomp 演示（需先编译 chap09）
+   cd source/code/chap09 && make seccomp_demo && ./seccomp_demo
+
+``seccomp_demo`` 限制 syscall 集合后，非法调用将收到 ``SIGSYS``。对比 unrestricted 进程的 ``strace`` 输出，理解沙箱如何缩小内核攻击面。
+
 下一节用 C++ 内联汇编直接发起 ``syscall`` 指令，绕过 libc 封装。

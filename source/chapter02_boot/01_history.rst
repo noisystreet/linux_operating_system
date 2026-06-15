@@ -93,4 +93,6 @@ init 系统的变迁
         → systemd 按依赖顺序启动各服务
         → 图形界面或登录提示符出现
 
+前沿方向：:strong:`UKI` （Unified Kernel Image）将内核、initramfs、内核命令行打包为单个 UEFI 可执行文件，简化 Secure Boot 签名与部署；systemd-boot 与部分发行版已支持。传统 ``vmlinuz`` + ``initrd.img`` 分离模式仍将长期并存，排障时须区分二者（见本章 outlook 与 ``04_linux_boot``）。
+
 这条链路中的每一个环节，后续各节都会展开讲解。下一节从链路的最前端——固件层——开始。

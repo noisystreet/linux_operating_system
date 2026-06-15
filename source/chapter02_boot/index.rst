@@ -5,6 +5,15 @@
 从按下电源键到登录提示符出现，计算机经历了一个复杂的启动流程。
 本章详细拆解固件、引导加载程序和内核初始化三个阶段。
 
+学习目标
+========
+
+- 描述 BIOS/UEFI、引导加载程序、内核、init 四阶段的职责与交接
+- 阅读 ``dmesg``、GRUB 配置与 ``/boot`` 目录内容
+- 理解 initramfs 的作用（``lab_boot``、附录 :doc:`/appendix/a2_build_kernel`）
+
+先修要求：完成第 1 章；部分实验需 root 或虚拟机。
+
 .. toctree::
    :maxdepth: 2
 
