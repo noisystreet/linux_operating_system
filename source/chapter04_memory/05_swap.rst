@@ -96,6 +96,30 @@ zswap 与 zsmalloc
 
 内核使用:strong:`zsmalloc` 等专用分配器管理压缩页，平衡压缩率和分配效率。
 
+.. code-block:: bash
+
+   # 查看 zswap 是否启用（需内核 CONFIG_ZSWAP=y）
+   cat /sys/module/zswap/parameters/enabled
+   # 压缩算法、占最大内存比例等
+   ls /sys/module/zswap/parameters/
+
+``max_pool_percent`` 限制 zswap 池占物理内存的比例，避免压缩本身耗尽 RAM。容器场景下，cgroup ``memory.max`` 触发回收时，zswap 可延缓对磁盘的换出，但 CPU 开销上升——需在延迟与容量之间权衡。
+
+zram 与 zswap 选型参考：
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 42
+
+   * - 方案
+     - 适用场景
+   * - zram
+     - 无磁盘或磁盘极慢的嵌入式/云主机 swap
+   * - zswap
+     - 有 swap 分区，希望减少磁盘 I/O 的桌面/服务器
+   * - 传统 swap 文件
+     - 大内存压力、需 hibernate 镜像
+
 Swap 与性能
 ========================
 

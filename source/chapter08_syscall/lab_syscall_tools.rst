@@ -35,6 +35,30 @@ perf 跟踪 syscall
 
 ``perf trace`` 类似 strace，基于内核 tracepoint，开销较低。需内核支持 ``CONFIG_FTRACE_SYSCALL``。
 
+解读 strace -c 输出
+==========================
+
+``strace -c ls /tmp`` 典型输出列含义：
+
+.. list-table::
+   :header-rows: 1
+   :widths: 22 48
+
+   * - 列
+     - 含义
+   * - % time
+     - 该 syscall 在内核+用户态等待中占的耗时比例（非精确 CPU 时间）
+   * - seconds
+     - 累计耗时（秒）
+   * - usec/call
+     - 每次调用平均微秒数
+   * - calls
+     - 调用次数
+   * - errors
+     - 返回负 errno 的次数
+
+若 ``openat`` 的 ``errors`` 较高，可能是路径不存在或权限问题；``read`` 的 ``usec/call`` 极大可能表示等待慢速设备。对比 ``strace -c`` 与 ``perf stat`` 可区分"syscall 次数多"与"单次 syscall 慢"两类瓶颈。
+
 查看系统调用表符号
 ==========================
 

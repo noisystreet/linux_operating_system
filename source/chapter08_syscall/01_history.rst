@@ -62,4 +62,13 @@ seccomp 与过滤
 
 :strong:`seccomp` （secure computing）限制进程可使用的系统调用，容器和沙箱（Chrome、systemd）用它缩小攻击面。违反规则时进程被 ``SIGKILL`` 终止。
 
+其他架构与兼容层
+========================
+
+除 x86-64 外，Linux 在 aarch64、riscv64、loongarch64 等架构上各有 syscall 入口实现，但:strong:`语义一致` ：应用通过 glibc 调用 ``open``，内核执行 ``sys_openat`` 等逻辑与架构无关的 VFS 代码。
+
+- aarch64：``svc #0``，系统调用号在 ``x8``，参数在 ``x0``–``x5`` （见 ``02_syscall_overview`` ABI 表）
+- x86 32 位：仍可见 ``int 0x80`` 与 ``sysenter`` 路径
+- 兼容层：x86 程序在 aarch64 主机上可通过 qemu-user 或 box64 等转译，syscall 被拦截并映射到宿主内核
+
 系统调用是用户与内核的边界。下一节介绍系统调用的概念、POSIX 接口和 Linux 的实现概览。

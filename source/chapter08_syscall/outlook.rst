@@ -22,6 +22,13 @@ glibc 封装 ``read``、``write``、``clone`` 等；``strace``、``perf trace`` 
 
 自定义 syscall 补丁文档（``lab_syscall_asm``）说明主线内核:strong:`不鼓励` 动态增 syscall；生产扩展优先 ``ioctl``、netlink、BPF。
 
+动手延伸
+========================
+
+#. 用 ``strace -c`` 对比 ``date`` 动态链接版与 ``busybox date`` 静态版的 ``clock_gettime`` 调用次数（``04_vdso``）。
+#. 运行 ``lab_syscall_asm`` 中的 raw syscall 程序，``strace`` 确认仅 ``write``、``getpid`` 进入内核。
+#. 阅读 ``/proc/self/syscall`` 与 ``grep Seccomp /proc/self/status``，对照第 9 章 seccomp 节。
+
 进一步了解
 ==========================
 

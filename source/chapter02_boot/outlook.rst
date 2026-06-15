@@ -22,6 +22,13 @@ x86 服务器与 PC 仍以 UEFI + GRUB/systemd-boot + systemd 为主流；嵌入
 
 自定义 init 实验（``source/code/chap02/mini_init``、``build_initramfs.sh``）对应 ``kernel_init`` 最终 ``exec`` init 的路径。附录 :doc:`/appendix/a2_build_kernel` 说明如何构建自有 ``bzImage`` 并在 QEMU 中验证。
 
+动手延伸
+========================
+
+#. 用 ``journalctl -b 0`` 与 ``journalctl -b -1`` 对比本次与上次启动日志，定位失败启动时的内核 panic 行。
+#. 在 ``/boot`` 中列出 ``vmlinuz``、``initrd``、``config``，用 ``lsinitrd`` 查看 initramfs 内含模块（若已安装）。
+#. 修改 GRUB 内核参数临时加入 ``init=/bin/bash``（仅虚拟机测试），观察跳过 systemd 后的最小环境。
+
 进一步了解
 ==========================
 
