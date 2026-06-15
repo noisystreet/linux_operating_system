@@ -32,7 +32,7 @@ setuid 观察
    ls -l /usr/bin/passwd
    ls -l /usr/bin/sudo
 
-观察 ``s`` 位。:strong:`不要` 对不可信程序设置 setuid。
+观察 ``s`` 位。**不要** 对不可信程序设置 setuid。
 
 ACL 实验
 ==========================
@@ -112,7 +112,7 @@ SELinux 排错演练（Fedora/RHEL 或启用 SELinux 的系统）
    getenforce                    # Enforcing / Permissive / Disabled
    ls -Z /etc/passwd             # 查看 SELinux 上下文 user_u:object_r:passwd_file_t
 
-在 :strong:`Permissive` 模式下，违反策略的操作会记录但不拒绝，适合学习：
+在 **Permissive** 模式下，违反策略的操作会记录但不拒绝，适合学习：
 
 .. code-block:: bash
 
@@ -122,7 +122,7 @@ SELinux 排错演练（Fedora/RHEL 或启用 SELinux 的系统）
    sudo audit2allow -a -M myfix    # 根据 AVC 生成策略模块建议
    sudo semodule -i myfix.pp       # 加载策略（理解含义后再做）
 
-:strong:`audit2allow` 输出的是建议而非真理——盲目加载可能扩大攻击面。正确做法是理解 AVC 日志中的 ``scontext``、``tcontext``、``tclass``，在策略中精确授权。
+**audit2allow** 输出的是建议而非真理——盲目加载可能扩大攻击面。正确做法是理解 AVC 日志中的 ``scontext``、``tcontext``、``tclass``，在策略中精确授权。
 
 AppArmor profile 浏览
 ==========================
@@ -133,7 +133,7 @@ AppArmor profile 浏览
    sudo aa-complain /usr/sbin/tcpdump   # 切换为抱怨模式（仅记录）
    cat /etc/apparmor.d/usr.sbin.tcpdump
 
-profile 按:strong:`路径` 限制程序行为，比 SELinux 类型标签直观。容器可通过 ``--security-opt apparmor=profile.json`` 附加自定义 profile。
+profile 按 **路径** 限制程序行为，比 SELinux 类型标签直观。容器可通过 ``--security-opt apparmor=profile.json`` 附加自定义 profile。
 
 seccomp 动手实验
 ==========================

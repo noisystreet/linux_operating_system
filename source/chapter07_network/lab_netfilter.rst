@@ -45,7 +45,7 @@
 修改钩子行为（实验）
 ==========================
 
-将源码中 ``return NF_ACCEPT`` 改为 ``return NF_DROP`` 可对匹配的 TCP 包:strong:`静默丢弃` （:strong:`勿在生产环境尝试` ）。重新 ``make modules``、``rmmod``、``insmod`` 后，``echo_client`` 应无法连接。
+将源码中 ``return NF_ACCEPT`` 改为 ``return NF_DROP`` 可对匹配的 TCP 包 **静默丢弃** （**勿在生产环境尝试** ）。重新 ``make modules``、``rmmod``、``insmod`` 后，``echo_client`` 应无法连接。
 
 卸载
 ==========================
@@ -58,7 +58,7 @@
 与 iptables 的关系
 ==========================
 
-``iptables``/``nftables`` 规则同样通过 Netfilter 框架注册钩子。本模块演示的是:strong:`内核模块直接注册钩子` 的方式，等价于在链上插入自定义逻辑。生产环境更常用 nftables 或 eBPF（见 :doc:`05_ebpf`）配置策略。
+``iptables``/``nftables`` 规则同样通过 Netfilter 框架注册钩子。本模块演示的是 **内核模块直接注册钩子** 的方式，等价于在链上插入自定义逻辑。生产环境更常用 nftables 或 eBPF（见 :doc:`05_ebpf`）配置策略。
 
 内核路径：``net/netfilter/nf_hook.c``、``include/linux/netfilter.h``。
 

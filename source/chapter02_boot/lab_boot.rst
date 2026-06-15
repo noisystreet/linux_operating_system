@@ -130,7 +130,7 @@ Bootloader 传递给内核的参数保存在 ``/proc/cmdline`` 中：
 用 C++ 编写最小 init 程序
 ==========================
 
-理解 init 职责的最好方式是亲手写一个。下面是一个 :strong:`极简 init` 程序，演示 PID 1 的核心行为：启动一个 shell 并回收子进程。
+理解 init 职责的最好方式是亲手写一个。下面是一个 **极简 init** 程序，演示 PID 1 的核心行为：启动一个 shell 并回收子进程。
 
 .. code-block:: cpp
 
@@ -183,7 +183,7 @@ Bootloader 传递给内核的参数保存在 ``/proc/cmdline`` 中：
 
 .. warning::
 
-   :strong:`不要` 在真实系统上用此程序替换 systemd！在正常的 Linux 上，PID 1 由内核启动时硬编码为 ``/sbin/init`` （指向 systemd）。要实验自定义 init，需要使用虚拟机或 initramfs 环境。下面的 QEMU 实验供学有余力者尝试。
+   **不要** 在真实系统上用此程序替换 systemd！在正常的 Linux 上，PID 1 由内核启动时硬编码为 ``/sbin/init`` （指向 systemd）。要实验自定义 init，需要使用虚拟机或 initramfs 环境。下面的 QEMU 实验供学有余力者尝试。
 
 QEMU 实验（进阶）
 ==========================

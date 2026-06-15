@@ -2,12 +2,12 @@
 LSM 与安全模块
 ======================
 
-:strong:`LSM` （Linux Security Module）在内核关键操作点插入钩子，由可加载的安全模块实施:strong:`强制访问控制` （MAC）。用户无法绕过系统策略，即使文件属主也不能随意授权。本节介绍 LSM 框架、SELinux 和 AppArmor。
+**LSM** （Linux Security Module）在内核关键操作点插入钩子，由可加载的安全模块实施 **强制访问控制** （MAC）。用户无法绕过系统策略，即使文件属主也不能随意授权。本节介绍 LSM 框架、SELinux 和 AppArmor。
 
 LSM 框架
 ========================
 
-LSM 在 DAC 检查:strong:`之后` 进行额外验证。钩子覆盖：
+LSM 在 DAC 检查 **之后** 进行额外验证。钩子覆盖：
 
 - 文件 inode 的 permission、alloc
 - 进程的 execve、ptrace
@@ -23,7 +23,7 @@ LSM 在 DAC 检查:strong:`之后` 进行额外验证。钩子覆盖：
 SELinux
 ========================
 
-:strong:`SELinux` （Security-Enhanced Linux）由 NSA 开发，RHEL、Fedora、CentOS 默认启用。基于:strong:`类型强制` （Type Enforcement）：每个进程有域（domain），每个文件有类型（type），策略规定哪些域可访问哪些类型。
+**SELinux** （Security-Enhanced Linux）由 NSA 开发，RHEL、Fedora、CentOS 默认启用。基于 **类型强制** （Type Enforcement）：每个进程有域（domain），每个文件有类型（type），策略规定哪些域可访问哪些类型。
 
 .. code-block:: bash
 
@@ -33,7 +33,7 @@ SELinux
    sestatus
    ls -Z /etc/passwd    # 查看 SELinux 上下文
 
-:strong:`Enforcing` ：违反策略拒绝并记录。:strong:`Permissive` ：仅记录不拒绝，用于调试。:strong:`Disabled` ：关闭 SELinux。
+**Enforcing** ：违反策略拒绝并记录。**Permissive** ：仅记录不拒绝，用于调试。**Disabled** ：关闭 SELinux。
 
 常见排错：
 
@@ -47,7 +47,7 @@ SELinux 策略复杂，学习曲线陡，但提供细粒度强制隔离，容器
 AppArmor
 ========================
 
-:strong:`AppArmor` 由 Ubuntu/SUSE 等采用，基于:strong:`路径` 的 profile：规定某程序可访问哪些路径、可执行哪些能力。
+**AppArmor** 由 Ubuntu/SUSE 等采用，基于 **路径** 的 profile：规定某程序可访问哪些路径、可执行哪些能力。
 
 .. code-block:: bash
 
@@ -82,7 +82,7 @@ profile 比 SELinux 类型标签直观，适合桌面和通用服务器。Docker
 seccomp 与沙箱
 ========================
 
-:strong:`seccomp` 限制进程可用的:strong:`系统调用` 集合，与 LSM 互补。Chrome、systemd、Docker 广泛使用。``SECCOMP_MODE_FILTER`` 使用 BPF 程序过滤 syscall。
+**seccomp** 限制进程可用的 **系统调用** 集合，与 LSM 互补。Chrome、systemd、Docker 广泛使用。``SECCOMP_MODE_FILTER`` 使用 BPF 程序过滤 syscall。
 
 .. code-block:: bash
 
@@ -93,14 +93,14 @@ seccomp 与沙箱
 LSM 堆叠与 BPF LSM
 ==========================
 
-Linux 5.4+ 支持多个 LSM 同时启用（:strong:`LSM stacking` ）。查看当前顺序：
+Linux 5.4+ 支持多个 LSM 同时启用（**LSM stacking** ）。查看当前顺序：
 
 .. code-block:: bash
 
    cat /sys/kernel/security/lsm
    # 例如 lockdown,capability,landlock,yama,apparmor
 
-:strong:`Landlock` （较新 LSM）允许:strong:`非特权进程` 自 sandbox，与 seccomp 类似但可限制文件系统路径。:strong:`BPF LSM` 允许用 eBPF 程序实现自定义 MAC 钩子，适合云原生策略引擎。
+**Landlock** （较新 LSM）允许 **非特权进程** 自 sandbox，与 seccomp 类似但可限制文件系统路径。**BPF LSM** 允许用 eBPF 程序实现自定义 MAC 钩子，适合云原生策略引擎。
 
 seccomp 过滤器原理
 ==========================

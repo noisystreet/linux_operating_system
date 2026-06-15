@@ -19,7 +19,7 @@
    Mem:           15Gi       4.2Gi       6.1Gi       256Mi       5.0Gi        10Gi
    Swap:         2.0Gi          0B       2.0Gi
 
-:strong:`available` 比 ``free`` 更有意义——它估算在不触发 swap 的情况下可用于新申请的内存（含可回收的 cache）。``buff/cache`` 是文件缓存，需要时可被回收。
+**available** 比 ``free`` 更有意义——它估算在不触发 swap 的情况下可用于新申请的内存（含可回收的 cache）。``buff/cache`` 是文件缓存，需要时可被回收。
 
 详细内存信息
 ==========================

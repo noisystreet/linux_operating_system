@@ -33,7 +33,7 @@ Mount Namespace 与 /proc
 网络 Namespace：veth 组网实验
 ================================
 
-单独 ``unshare -n`` 只能看到 ``lo``。要让隔离环境与外界通信，需创建:strong:`veth 对` （虚拟以太网对）：一端留在宿主机，另一端移入目标网络命名空间，再配置 IP 与路由。
+单独 ``unshare -n`` 只能看到 ``lo``。要让隔离环境与外界通信，需创建 **veth 对** （虚拟以太网对）：一端留在宿主机，另一端移入目标网络命名空间，再配置 IP 与路由。
 
 .. code-block:: text
 
@@ -69,7 +69,7 @@ Mount Namespace 与 /proc
 
 **方式二：配合 ``unshare -n``**
 
-在 ``unshare -n`` 创建的 shell 中，进程已处于新 netns，但接口需由:strong:`另一终端`` 创建 veth 并 ``ip link set veth1 netns <pid>`` 移入。Docker 的 ``docker0`` 桥接 + veth 正是此模式的自动化版本。
+在 ``unshare -n`` 创建的 shell 中，进程已处于新 netns，但接口需由 **另一终端** 创建 veth 并 ``ip link set veth1 netns <pid>`` 移入。Docker 的 ``docker0`` 桥接 + veth 正是此模式的自动化版本。
 
 .. code-block:: bash
 

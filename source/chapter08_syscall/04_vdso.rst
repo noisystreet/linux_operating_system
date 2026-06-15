@@ -2,7 +2,7 @@
 vDSO 与快速系统调用
 ======================
 
-每次系统调用都涉及用户态与内核态切换，开销约数百纳秒到数微秒。对于 ``gettimeofday``、``clock_gettime`` 等高频调用，Linux 通过:strong:`vDSO` 在用户态提供实现，避免陷入内核。本节介绍 vDSO 的原理和使用。
+每次系统调用都涉及用户态与内核态切换，开销约数百纳秒到数微秒。对于 ``gettimeofday``、``clock_gettime`` 等高频调用，Linux 通过 **vDSO** 在用户态提供实现，避免陷入内核。本节介绍 vDSO 的原理和使用。
 
 为什么需要 vDSO
 ========================
@@ -19,7 +19,7 @@ vDSO 与快速系统调用
 vDSO 是什么
 ========================
 
-:strong:`vDSO` （virtual Dynamic Shared Object）是内核在进程地址空间映射的一个特殊 ELF 共享库，通常位于 ``[vdso]`` 区域：
+**vDSO** （virtual Dynamic Shared Object）是内核在进程地址空间映射的一个特殊 ELF 共享库，通常位于 ``[vdso]`` 区域：
 
 .. code-block:: bash
 
@@ -47,7 +47,7 @@ vDSO 提供的函数
    * - __vdso_time
      - time() 快速路径
 
-实现通常读取:strong:`vvar` 页（与 vDSO 配套的内核更新页）中的时间数据，由内核在时钟中断时更新，用户态只读无需 syscall。
+实现通常读取 **vvar** 页（与 vDSO 配套的内核更新页）中的时间数据，由内核在时钟中断时更新，用户态只读无需 syscall。
 
 查看 vDSO 符号
 ========================
@@ -84,7 +84,7 @@ vDSO 提供的函数
 vsyscall 页的废弃
 ========================
 
-早期 x86-64 有固定地址的:strong:`vsyscall` 页（``0xffffffffff600000``），提供快速 ``gettimeofday``。因安全顾虑（固定地址、无法 ASLR），已被 vDSO 取代。``CONFIG_X86_VSYSCALL_EMULATION`` 可禁用遗留模拟。
+早期 x86-64 有固定地址的 **vsyscall** 页（``0xffffffffff600000``），提供快速 ``gettimeofday``。因安全顾虑（固定地址、无法 ASLR），已被 vDSO 取代。``CONFIG_X86_VSYSCALL_EMULATION`` 可禁用遗留模拟。
 
 seccomp 与 vDSO
 ========================

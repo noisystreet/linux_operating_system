@@ -7,7 +7,7 @@
 strace / ltrace
 ========================
 
-:strong:`strace` ：跟踪:strong:`系统调用` 和信号。
+**strace** ：跟踪 **系统调用** 和信号。
 
 .. code-block:: bash
 
@@ -15,7 +15,7 @@ strace / ltrace
    strace -p <pid>
    strace -c -f command
 
-:strong:`ltrace` ：跟踪:strong:`库函数` 调用（动态链接）。
+**ltrace** ：跟踪 **库函数** 调用（动态链接）。
 
 .. code-block:: bash
 

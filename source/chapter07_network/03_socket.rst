@@ -76,19 +76,19 @@ UDP 无连接、不保证可靠，适合 DNS、视频流等场景：
    int opt = 1;
    setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
 
-:strong:`SO_REUSEADDR` ：允许绑定处于 TIME_WAIT 状态的端口，服务器重启时常用。
+**SO_REUSEADDR** ：允许绑定处于 TIME_WAIT 状态的端口，服务器重启时常用。
 
 .. code-block:: cpp
 
    struct timeval tv{5, 0};
    setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv));
 
-:strong:`SO_RCVTIMEO` / ``SO_SNDTIMEO`` ：设置收发超时。
+**SO_RCVTIMEO** / ``SO_SNDTIMEO`` ：设置收发超时。
 
 I/O 多路复用
 ========================
 
-单线程服务多连接需:strong:`I/O 多路复用` ：
+单线程服务多连接需 **I/O 多路复用** ：
 
 .. list-table::
    :header-rows: 1

@@ -133,7 +133,7 @@ UDP 变体（可选）
 
 将 ``SOCK_STREAM`` 改为 ``SOCK_DGRAM``，服务器用 ``recvfrom``/``sendto``，客户端用 ``sendto``，无需 ``listen``/``accept``。体会无连接协议的区别。
 
-应用通过 socket 使用网络，而 socket 底层依赖:strong:`系统调用` 进入内核。下一章深入系统调用的实现机制。
+应用通过 socket 使用网络，而 socket 底层依赖 **系统调用** 进入内核。下一章深入系统调用的实现机制。
 
 拓展阅读
 ==========

@@ -72,12 +72,12 @@ chroot 最小体验
    # 复制 ldd 显示的依赖库到 /tmp/minroot/lib（因系统而异）
    sudo chroot /tmp/minroot /bin/ls
 
-chroot 仅改变根目录视图，:strong:`不是` 完整容器。对比 ``unshare --mount`` 的隔离范围。
+chroot 仅改变根目录视图，**不是** 完整容器。对比 ``unshare --mount`` 的隔离范围。
 
 手工 cgroup v2 内存限制
 ==========================
 
-不依赖 Docker，直接用 cgroup v2 限制进程内存（:strong:`需 root` ）：
+不依赖 Docker，直接用 cgroup v2 限制进程内存（**需 root** ）：
 
 .. code-block:: bash
 

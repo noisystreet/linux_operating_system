@@ -2,7 +2,7 @@
 Linux Namespaces
 ======================
 
-:strong:`Namespace` 将内核全局资源包装为独立实例，使进程组看到隔离的 PID、网络、挂载等视图。Namespace 是容器的核心隔离机制之一。本节介绍七种 namespace 及其用途。
+**Namespace** 将内核全局资源包装为独立实例，使进程组看到隔离的 PID、网络、挂载等视图。Namespace 是容器的核心隔离机制之一。本节介绍七种 namespace 及其用途。
 
 七种 Namespace
 ========================
@@ -126,12 +126,12 @@ Docker 与 Namespace
        BR --- VH
        VE --> APP
 
-:strong:`图` ：容器 veth 网络模型
+**图** ：容器 veth 网络模型
 
 User Namespace
 ========================
 
-:strong:`User namespace` 允许非 root 用户在命名空间内映射为 UID 0，在命名空间外仍为普通用户，是 rootless 容器的基础：
+**User namespace** 允许非 root 用户在命名空间内映射为 UID 0，在命名空间外仍为普通用户，是 rootless 容器的基础：
 
 .. code-block:: bash
 
@@ -139,4 +139,4 @@ User Namespace
 
 安全边界较其他 namespace 弱，需配合 seccomp、capability 限制。
 
-Namespace 提供"视图隔离"，不限制资源用量。CPU、内存限制由:strong:`Cgroups` 实现——下一节介绍。
+Namespace 提供"视图隔离"，不限制资源用量。CPU、内存限制由 **Cgroups** 实现——下一节介绍。

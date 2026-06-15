@@ -9,10 +9,10 @@ CPU 调度
 
 没有调度器，多进程系统将退化为"谁先抢到 CPU 谁一直运行"。调度器解决：
 
-- :strong:`公平性` ：每个进程都应获得合理的 CPU 时间
-- :strong:`响应性` ：交互式应用（终端、GUI）应快速响应
-- :strong:`吞吐量` ：批处理任务应尽可能高效完成
-- :strong:`实时性` ：部分任务有截止时间要求
+- **公平性** ：每个进程都应获得合理的 CPU 时间
+- **响应性** ：交互式应用（终端、GUI）应快速响应
+- **吞吐量** ：批处理任务应尽可能高效完成
+- **实时性** ：部分任务有截止时间要求
 
 这些目标有时互相矛盾——提升交互响应可能牺牲批处理吞吐量。调度算法就是在不同场景下做权衡。
 
@@ -26,12 +26,12 @@ CPU 调度
 - 唤醒：等待的事件就绪，可能抢占当前进程
 - 进程退出
 
-:strong:`抢占` （preemption）指高优先级或可运行进程迫使当前进程让出 CPU。Linux 从 2.6 起对内核态也支持有限抢占（CONFIG_PREEMPT），桌面系统默认开启，保证高优先级任务能及时运行。
+**抢占** （preemption）指高优先级或可运行进程迫使当前进程让出 CPU。Linux 从 2.6 起对内核态也支持有限抢占（CONFIG_PREEMPT），桌面系统默认开启，保证高优先级任务能及时运行。
 
 调度策略
 ========================
 
-Linux 为每个线程（调度实体）分配:strong:`调度策略` （scheduling policy）和:strong:`优先级` （priority）。常用策略：
+Linux 为每个线程（调度实体）分配 **调度策略** （scheduling policy）和 **优先级** （priority）。常用策略：
 
 .. list-table::
    :header-rows: 1
@@ -64,14 +64,14 @@ O(1) 调度器（历史）
 
 Linux 2.6 引入的 O(1) 调度器将进程按优先级分为 140 个队列，用位图在常数时间内找到最高优先级非空队列。它解决了 2.4 时代 O(n) 调度器在进程数多时性能下降的问题。
 
-O(1) 调度器按:strong:`时间片` 分配 CPU：每个优先级有固定时间片，用完则降到更低优先级队列。这种"过期惩罚"机制容易导致交互进程在 I/O 密集和 CPU 密集任务之间切换时响应变差。
+O(1) 调度器按 **时间片** 分配 CPU：每个优先级有固定时间片，用完则降到更低优先级队列。这种"过期惩罚"机制容易导致交互进程在 I/O 密集和 CPU 密集任务之间切换时响应变差。
 
 CFS：完全公平调度器
 ========================
 
-2007 年，Ingo Molnar 提交的:strong:`CFS` （Completely Fair Scheduler）成为 Linux 默认调度器，沿用至今。CFS 的核心思想不是时间片，而是:strong:`虚拟运行时间` （vruntime）。
+2007 年，Ingo Molnar 提交的 **CFS** （Completely Fair Scheduler）成为 Linux 默认调度器，沿用至今。CFS 的核心思想不是时间片，而是 **虚拟运行时间** （vruntime）。
 
-每个可运行进程在红黑树（按 vruntime 排序）中排队。调度器总是选择 vruntime:strong:`最小` 的进程运行——即"欠 CPU 时间最多"的进程。运行一段时间后，其 vruntime 增加，被换出，下一个 vruntime 最小的进程运行。
+每个可运行进程在红黑树（按 vruntime 排序）中排队。调度器总是选择 vruntime **最小** 的进程运行——即"欠 CPU 时间最多"的进程。运行一段时间后，其 vruntime 增加，被换出，下一个 vruntime 最小的进程运行。
 
 .. code-block:: text
 
@@ -95,7 +95,7 @@ CFS 的实现位于 ``kernel/sched/fair.c``，关键函数包括 ``enqueue_entit
 多核调度与负载均衡
 ========================
 
-每个 CPU 核心有独立的:strong:`运行队列` （runqueue）。新进程优先在创建它的 CPU 上运行（缓存局部性）。当某 CPU 负载过高，:strong:`负载均衡` 机制会将任务迁移到其他 CPU。
+每个 CPU 核心有独立的 **运行队列** （runqueue）。新进程优先在创建它的 CPU 上运行（缓存局部性）。当某 CPU 负载过高，**负载均衡** 机制会将任务迁移到其他 CPU。
 
 ``taskset`` 可绑定进程到指定 CPU：
 
@@ -109,7 +109,7 @@ CFS 的实现位于 ``kernel/sched/fair.c``，关键函数包括 ``enqueue_entit
 cgroup 与组调度
 ========================
 
-``cpu`` cgroup 控制器可限制一组进程的总 CPU 使用率。Docker、systemd 等利用 cgroup 实现资源隔离。CFS 的:strong:`组调度` （group scheduling）在 cgroup 层级上分配 CPU 带宽，确保各组之间的公平。
+``cpu`` cgroup 控制器可限制一组进程的总 CPU 使用率。Docker、systemd 等利用 cgroup 实现资源隔离。CFS 的 **组调度** （group scheduling）在 cgroup 层级上分配 CPU 带宽，确保各组之间的公平。
 
 .. code-block:: bash
 

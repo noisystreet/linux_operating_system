@@ -2,12 +2,12 @@
 DAC 与文件权限
 ======================
 
-Linux 默认采用:strong:`自主访问控制` （DAC）：每个文件有所有者，所有者（和 root）可自主决定访问权限。本节介绍用户/组、权限位、umask 和 setuid 机制。
+Linux 默认采用 **自主访问控制** （DAC）：每个文件有所有者，所有者（和 root）可自主决定访问权限。本节介绍用户/组、权限位、umask 和 setuid 机制。
 
 用户、组与其他
 ========================
 
-每个进程有:strong:`有效 UID` （EUID）和:strong:`有效 GID` （EGID），决定访问文件时的身份。每个文件 inode 记录:strong:`所有者 UID`、:strong:`所属组 GID` 和:strong:`权限位` 。
+每个进程有 **有效 UID** （EUID）和 **有效 GID** （EGID），决定访问文件时的身份。每个文件 inode 记录 **所有者 UID**、**所属组 GID** 和 **权限位** 。
 
 访问检查时，内核按顺序匹配：
 
@@ -24,7 +24,7 @@ Linux 默认采用:strong:`自主访问控制` （DAC）：每个文件有所有
 权限位 rwx
 ========================
 
-三组各三位：:strong:`r` （读）、:strong:`w` （写）、:strong:`x` （执行）。目录的 ``x`` 表示:strong:`进入目录` 的权限（cd、访问其中文件），而非列出目录（列出需 ``r``）。
+三组各三位：**r** （读）、**w** （写）、**x** （执行）。目录的 ``x`` 表示 **进入目录** 的权限（cd、访问其中文件），而非列出目录（列出需 ``r``）。
 
 .. code-block:: bash
 
@@ -52,7 +52,7 @@ chown 与特权
 umask
 ========================
 
-:strong:`umask` 决定:strong:`新建文件/目录` 的默认权限掩码。创建时权限为 ``mode & ~umask``。
+**umask** 决定 **新建文件/目录** 的默认权限掩码。创建时权限为 ``mode & ~umask``。
 
 .. code-block:: bash
 
@@ -84,7 +84,7 @@ setuid、setgid 与 sticky
    ls -l /usr/bin/passwd    # -rwsr-xr-x，setuid root
    ls -ld /tmp              # drwxrwxrwt，sticky
 
-``passwd`` 需以 root 身份写 ``/etc/shadow``，故设 setuid。:strong:`setuid root` 程序是重大安全风险，应尽量减少。
+``passwd`` 需以 root 身份写 ``/etc/shadow``，故设 setuid。**setuid root** 程序是重大安全风险，应尽量减少。
 
 进程权限检查流程
 ========================

@@ -2,17 +2,17 @@
 访问控制列表（ACL）
 ======================
 
-传统 Unix 权限只有 owner/group/other 三组。:strong:`ACL` （Access Control List）为单个文件添加任意用户或组的独立权限，适合协作目录、多租户共享等场景。
+传统 Unix 权限只有 owner/group/other 三组。**ACL** （Access Control List）为单个文件添加任意用户或组的独立权限，适合协作目录、多租户共享等场景。
 
 ACL 扩展
 ========================
 
 POSIX ACL 扩展标准权限，增加:
 
-- :strong:`ACL_USER` ：指定用户的权限
-- :strong:`ACL_GROUP` ：指定组的权限
-- :strong:`ACL_MASK` ：上限掩码，限制 named user/group 的最大权限
-- :strong:`default ACL` ：目录的默认 ACL，新建文件继承
+- **ACL_USER** ：指定用户的权限
+- **ACL_GROUP** ：指定组的权限
+- **ACL_MASK** ：上限掩码，限制 named user/group 的最大权限
+- **default ACL** ：目录的默认 ACL，新建文件继承
 
 查看与设置
 ==========================
@@ -76,12 +76,12 @@ ext4、XFS、Btrfs 等支持 POSIX ACL，挂载时可能需要 ``acl`` 选项：
    mount | grep acl
    # /etc/fstab 中可加 acl 选项
 
-ACL 仍属 DAC——用户若有文件写权限，可修改 ACL 授予他人访问。要防止所有者随意授权，需:strong:`强制访问控制` （LSM）。下一节介绍 LSM 框架及 SELinux、AppArmor。
+ACL 仍属 DAC——用户若有文件写权限，可修改 ACL 授予他人访问。要防止所有者随意授权，需 **强制访问控制** （LSM）。下一节介绍 LSM 框架及 SELinux、AppArmor。
 
 内核中的 ACL 实现
 ==========================
 
-VFS 层在常规 ``inode_permission()`` 检查之后，调用文件系统特定的 ACL 钩子。ext4 将 POSIX ACL 存储在:strong:`扩展属性` （xattr）中：
+VFS 层在常规 ``inode_permission()`` 检查之后，调用文件系统特定的 ACL 钩子。ext4 将 POSIX ACL 存储在 **扩展属性** （xattr）中：
 
 .. code-block:: bash
 

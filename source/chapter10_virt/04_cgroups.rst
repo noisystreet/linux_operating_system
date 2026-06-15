@@ -2,13 +2,13 @@
 Cgroups 资源控制
 ======================
 
-:strong:`Cgroups` （Control Groups）限制、记录和隔离进程组的资源使用：CPU、内存、I/O、设备等。与 Namespace 结合，构成 Linux 容器的资源管理基础。
+**Cgroups** （Control Groups）限制、记录和隔离进程组的资源使用：CPU、内存、I/O、设备等。与 Namespace 结合，构成 Linux 容器的资源管理基础。
 
 Cgroup 版本
 ========================
 
-- :strong:`cgroup v1` ：每种资源独立层级，多挂载点，配置分散
-- :strong:`cgroup v2` ：统一层级，单挂载点 ``/sys/fs/cgroup``，RHEL 9、Ubuntu 22.04+ 默认
+- **cgroup v1** ：每种资源独立层级，多挂载点，配置分散
+- **cgroup v2** ：统一层级，单挂载点 ``/sys/fs/cgroup``，RHEL 9、Ubuntu 22.04+ 默认
 
 .. code-block:: bash
 

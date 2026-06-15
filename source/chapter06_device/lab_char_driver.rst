@@ -2,7 +2,7 @@
 实践：简单字符设备驱动
 ================================
 
-通过编写一个最小的:strong:`字符设备驱动` 内核模块，理解 ``file_operations``、设备号注册和用户空间访问 ``/dev`` 节点的完整流程。
+通过编写一个最小的 **字符设备驱动** 内核模块，理解 ``file_operations``、设备号注册和用户空间访问 ``/dev`` 节点的完整流程。
 
 .. note::
 
@@ -25,7 +25,7 @@
 驱动源码
 ==========================
 
-:strong:`hello_chardev.c` ：实现可读写的内存缓冲区字符设备。
+**hello_chardev.c** ：实现可读写的内存缓冲区字符设备。
 
 .. code-block:: c
 
@@ -230,7 +230,7 @@ Makefile
 Platform 设备与设备树（简介）
 ================================
 
-嵌入式平台上，硬件信息常由:strong:`设备树` （Device Tree）描述，内核在启动时解析 ``.dtb`` 并创建 ``platform_device``。驱动通过 ``of_match_table`` 与设备树节点 ``compatible`` 字符串匹配：
+嵌入式平台上，硬件信息常由 **设备树** （Device Tree）描述，内核在启动时解析 ``.dtb`` 并创建 ``platform_device``。驱动通过 ``of_match_table`` 与设备树节点 ``compatible`` 字符串匹配：
 
 .. code-block:: c
 

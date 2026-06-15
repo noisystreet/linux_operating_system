@@ -2,7 +2,7 @@
 容器原理
 ======================
 
-:strong:`容器` 是操作系统级虚拟化：共享内核，通过 Namespace 隔离视图、Cgroup 限制资源、镜像提供可重复的文件系统。本节介绍 OCI 标准、Docker 架构和最小容器的构成。
+**容器** 是操作系统级虚拟化：共享内核，通过 Namespace 隔离视图、Cgroup 限制资源、镜像提供可重复的文件系统。本节介绍 OCI 标准、Docker 架构和最小容器的构成。
 
 容器的构成
 ========================
@@ -32,15 +32,15 @@
        CG --> KERNEL
        ROOTFS["OverlayFS 根文件系统"] --> APP
 
-:strong:`图` ：容器运行时组件关系
+**图** ：容器运行时组件关系
 
 OCI 标准
 ========================
 
-:strong:`OCI` （Open Container Initiative）定义：
+**OCI** （Open Container Initiative）定义：
 
-- :strong:`runtime-spec` ：如何运行容器（runc、crun）
-- :strong:`image-spec` ：镜像格式（层、manifest、config.json）
+- **runtime-spec** ：如何运行容器（runc、crun）
+- **image-spec** ：镜像格式（层、manifest、config.json）
 
 Docker 推动标准化后，containerd、CRI-O、Podman 等均实现 OCI，镜像可跨运行时通用。
 
@@ -54,7 +54,7 @@ Docker 架构（简化）
    → containerd（容器运行时）
    → runc（OCI 运行时，创建 namespace+cgroup，exec 进程）
 
-镜像存储在:strong:`层` （layer）中，只读；容器可写层用:strong:`overlayfs` 联合挂载：
+镜像存储在 **层** （layer）中，只读；容器可写层用 **overlayfs** 联合挂载：
 
 .. code-block:: text
 
@@ -77,13 +77,13 @@ Docker 架构（简化）
 chroot 与 pivot_root
 ========================
 
-早期"容器"用:strong:`chroot` 改变进程根目录，仅隔离文件系统，不隔离 PID/网络：
+早期"容器"用 **chroot** 改变进程根目录，仅隔离文件系统，不隔离 PID/网络：
 
 .. code-block:: bash
 
    sudo chroot /path/to/rootfs /bin/bash
 
-:strong:`pivot_root` 是更彻底的根切换，容器运行时用于设置独立根文件系统。现代容器结合 mount namespace，比单纯 chroot 安全得多。
+**pivot_root** 是更彻底的根切换，容器运行时用于设置独立根文件系统。现代容器结合 mount namespace，比单纯 chroot 安全得多。
 
 最小容器手工构建（概念）
 ========================

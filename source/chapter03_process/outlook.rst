@@ -2,7 +2,7 @@
 延伸与趋势
 ======================
 
-进程、线程、调度与同步是操作系统永恒主题。Linux 的 ``fork``、CFS、``futex``、``pthread`` 仍是服务器与桌面程序运行的基石；前沿工作主要在:strong:`可观测性` 、:strong:`可插拔调度` 与:strong:`异步执行模型` 上扩展。
+进程、线程、调度与同步是操作系统永恒主题。Linux 的 ``fork``、CFS、``futex``、``pthread`` 仍是服务器与桌面程序运行的基石；前沿工作主要在 **可观测性** 、**可插拔调度** 与 **异步执行模型** 上扩展。
 
 工业界现状
 ==========================
@@ -12,10 +12,10 @@ CFS 公平调度器处理绝大多数通用负载；``NPTL`` 线程库基于 ``c
 值得关注的变化
 ==========================
 
-- :strong:`sched_ext` ：基于 BPF 的可插拔调度框架，允许在不修改核心 CFS 的前提下实验调度策略，与第 7 章 eBPF、第 3 章 ``06_sync`` 中 RCU 读多写少模型形成技术栈呼应。
-- :strong:`eBPF 调度观测` ：``bpftrace`` 跟踪 ``sched_switch``、``sched_wakeup`` 等 tracepoint，替代部分 ``ftrace`` 脚本，低开销分析延迟与锁竞争（附录 :doc:`/appendix/a1_debug_tools`）。
-- :strong:`io_uring 与任务工作` ：高并发服务将部分「等待 I/O」与任务提交合并到 io_uring 环（第 5 章），减少线程数与上下文切换，改变「一连接一线程」传统模型。
-- :strong:`用户态运行时` ：Go、Rust async runtime 在用户态调度 goroutine/task，底层仍依赖内核线程与 ``futex``；理解内核调度有助于解释 GOMAXPROCS、p99 延迟尖刺。
+- **sched_ext** ：基于 BPF 的可插拔调度框架，允许在不修改核心 CFS 的前提下实验调度策略，与第 7 章 eBPF、第 3 章 ``06_sync`` 中 RCU 读多写少模型形成技术栈呼应。
+- **eBPF 调度观测** ：``bpftrace`` 跟踪 ``sched_switch``、``sched_wakeup`` 等 tracepoint，替代部分 ``ftrace`` 脚本，低开销分析延迟与锁竞争（附录 :doc:`/appendix/a1_debug_tools`）。
+- **io_uring 与任务工作** ：高并发服务将部分「等待 I/O」与任务提交合并到 io_uring 环（第 5 章），减少线程数与上下文切换，改变「一连接一线程」传统模型。
+- **用户态运行时** ：Go、Rust async runtime 在用户态调度 goroutine/task，底层仍依赖内核线程与 ``futex``；理解内核调度有助于解释 GOMAXPROCS、p99 延迟尖刺。
 
 与本教程的衔接
 ==========================
