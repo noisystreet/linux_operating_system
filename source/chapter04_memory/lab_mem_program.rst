@@ -193,3 +193,5 @@ mmap 映射文件
 - ``man 2 mmap``、``man 3 malloc``、``man 5 proc``
 - 内核文档：``Documentation/admin-guide/mm/``
 - 内核源码 ``mm/page_alloc.c``、``mm/swap.c``
+
+本章完整参考资料与各节交叉索引见 :doc:`references`。

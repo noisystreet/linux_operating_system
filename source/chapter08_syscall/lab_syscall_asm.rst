@@ -141,7 +141,7 @@ glibc 的 ``syscall()`` 函数提供类似功能，生产代码应使用标准 A
 与第 1 章的联系
 ==========================
 
-第 1 章 ``lab_sysinfo`` 使用 ``uname()``、``sysinfo()``——底层即系统调用。本章揭示了这些调用的进入方式：用户态设置寄存器 → ``syscall`` → ``sys_call_table`` → 内核实现 → 返回用户态。
+第 1 章 :doc:`/chapter01_intro/lab_sysinfo` 使用 ``uname()``、``sysinfo()``——底层即系统调用。本章揭示了这些调用的进入方式：用户态设置寄存器 → ``syscall`` → ``sys_call_table`` → 内核实现 → 返回用户态。
 
 系统调用是用户与内核的边界。下一章讨论:strong:`安全与权限` —— 内核如何决定谁可以执行哪些操作。
 
@@ -151,3 +151,5 @@ glibc 的 ``syscall()`` 函数提供类似功能，生产代码应使用标准 A
 - ``man 2 syscall``、``man 2 syscalls``
 - 内核源码 ``arch/x86/entry/entry_64.S``、``include/linux/syscalls.h``
 - 《Linux 内核设计与实现》系统调用章节
+
+本章完整参考资料与各节交叉索引见 :doc:`references`。

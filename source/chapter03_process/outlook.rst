@@ -28,6 +28,7 @@ CFS 公平调度器处理绝大多数通用负载；``NPTL`` 线程库基于 ``c
 - 内核 ``Documentation/scheduler/``、``Documentation/bpf/sched-ext.rst``
 - LWN 系列：CFS、runqueues、PI futex
 - 第 4 章内存与第 8 章 syscall 是理解 ``fork`` COW、``futex`` 进入内核的下一站
+- 本章 :doc:`references` —— 进程/线程 API 手册页与源码阅读路线
 
 .. note::
 

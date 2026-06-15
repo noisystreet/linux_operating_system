@@ -58,7 +58,7 @@
 与 iptables 的关系
 ==========================
 
-``iptables``/``nftables`` 规则同样通过 Netfilter 框架注册钩子。本模块演示的是:strong:`内核模块直接注册钩子` 的方式，等价于在链上插入自定义逻辑。生产环境更常用 nftables 或 eBPF（见 ``05_ebpf.rst``）配置策略。
+``iptables``/``nftables`` 规则同样通过 Netfilter 框架注册钩子。本模块演示的是:strong:`内核模块直接注册钩子` 的方式，等价于在链上插入自定义逻辑。生产环境更常用 nftables 或 eBPF（见 :doc:`05_ebpf`）配置策略。
 
 内核路径：``net/netfilter/nf_hook.c``、``include/linux/netfilter.h``。
 
@@ -67,4 +67,6 @@
 
 - ``man 8 iptables``、``man 8 nft``
 - 内核文档 ``Documentation/networking/netfilter.rst``
-- 教程 ``04_netfilter.rst`` 钩子点说明
+- 教程 :doc:`04_netfilter` 钩子点说明
+
+本章完整参考资料与各节交叉索引见 :doc:`references`。

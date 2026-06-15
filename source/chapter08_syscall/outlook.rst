@@ -28,6 +28,7 @@ glibc 封装 ``read``、``write``、``clone`` 等；``strace``、``perf trace`` 
 - ``man 2 syscalls``、内核 ``Documentation/admin-guide/syscall-user-dispatch.rst``
 - 第 9 章 LSM 在 syscall 返回路径上的钩子
 - syzkaller 模糊测试与 syscall 兼容性
+- 本章 :doc:`references` —— syscall 手册、内联汇编实验与相关章节
 
 .. note::
 

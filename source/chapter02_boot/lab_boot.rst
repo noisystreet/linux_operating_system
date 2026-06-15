@@ -252,3 +252,5 @@ initramfs 制作脚本
 - ``man 8 systemd-analyze`` —— 启动性能分析工具
 - 内核源码 ``init/main.c`` 中的 ``start_kernel()`` 函数
 - 内核源码 ``init/do_mounts.c`` 中的根文件系统挂载逻辑
+
+本章完整参考资料与各节交叉索引见 :doc:`references`。

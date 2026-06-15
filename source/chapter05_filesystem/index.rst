@@ -17,3 +17,4 @@
    lab_fs_tools
    lab_fs_program
    outlook
+   references

@@ -16,3 +16,4 @@
    lab_mem_tools
    lab_mem_program
    outlook
+   references

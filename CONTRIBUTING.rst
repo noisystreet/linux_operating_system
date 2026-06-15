@@ -34,6 +34,7 @@
 - 每章示例放在 ``source/code/chapNN/``，章内 ``Makefile`` 引用 ``Makefile.common``
 - 新增用户态程序后：更新 ``source/code/README.rst``、对应 ``lab_*.rst`` 的 ``.. note::``，并将可自动验证的程序加入顶层 ``Makefile`` 的 ``test`` 目标
 - 各章 ``outlook.rst`` 保持简短（约 1 页），结构：工业界现状 → 变化 → 与本章衔接 → 进一步了解；更新时请标注大致时效
+- 各章 ``references.rst`` 维护本章 :doc: 交叉索引、``source/code`` 路径、手册页与相关章节；正文或 lab 变更时同步更新
 - 需 root、内核头文件或交互的示例：在 README 与 lab 中明确标注，不纳入默认 ``make test``
 
 提交前检查

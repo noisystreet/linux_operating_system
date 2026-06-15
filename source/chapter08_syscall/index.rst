@@ -16,3 +16,4 @@
    lab_syscall_tools
    lab_syscall_asm
    outlook
+   references

@@ -16,3 +16,4 @@
    lab_namespaces
    lab_cgroups
    outlook
+   references

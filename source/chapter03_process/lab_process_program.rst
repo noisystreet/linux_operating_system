@@ -204,3 +204,5 @@ fork 与 wait
 - ``man 2 fork``、``man 2 pipe``、``man 3 pthread_create``
 - ``man 5 proc`` —— /proc 文件系统
 - 内核源码 ``kernel/fork.c``、``kernel/exit.c``
+
+本章完整参考资料与各节交叉索引见 :doc:`references`。

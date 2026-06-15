@@ -15,3 +15,4 @@
    05_init_system
    lab_boot
    outlook
+   references
